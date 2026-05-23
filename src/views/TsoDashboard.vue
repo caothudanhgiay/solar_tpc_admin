@@ -192,20 +192,20 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const router = useRouter()
 const user = ref({ name: '', role: '', avatar: '' })
 
 onMounted(() => {
-  const storedUser = localStorage.getItem('solar_admin_user')
+  const storedUser = LocalStorageUtils.getUser()
   if (storedUser) {
-    user.value = JSON.parse(storedUser)
+    user.value = storedUser
   }
 })
 
 const handleLogout = () => {
-  localStorage.removeItem('solar_admin_token')
-  localStorage.removeItem('solar_admin_user')
+  LocalStorageUtils.clearAuth()
   router.push({ name: 'TsoLogin' })
 }
 </script>

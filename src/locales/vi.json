@@ -1,0 +1,20 @@
+{
+  "dashboard": "Bảng điều khiển",
+  "login": "Đăng nhập",
+  "logout": "Đăng xuất",
+  "welcome": "Chào mừng",
+  "loginPage": {
+    "title": "SOLAR TPC",
+    "subtitle": "Hệ thống Giám sát & Quản trị Năng lượng",
+    "username": "Tài khoản quản trị",
+    "usernamePlaceholder": "Nhập tài khoản...",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu...",
+    "rememberMe": "Ghi nhớ phiên đăng nhập",
+    "button": "Đăng Nhập",
+    "loading": "Đang xác thực...",
+    "errorEmpty": "Tài khoản và mật khẩu không được để trống.",
+    "errorInvalid": "Tài khoản hoặc mật khẩu không chính xác.",
+    "errorServer": "Lỗi máy chủ, vui lòng thử lại sau."
+  }
+}

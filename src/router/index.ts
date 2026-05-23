@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '../views/TsoLogin.vue'
 import Dashboard from '../views/TsoDashboard.vue'
+import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,13 +27,13 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
 // Route protection guards
 router.beforeEach((to, _from, next) => {
-  const isLoggedIn = !!localStorage.getItem('solar_admin_token')
+  const isLoggedIn = !!LocalStorageUtils.getToken()
   
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isLoggedIn) {

@@ -1,18 +1,10 @@
 import { createI18n } from 'vue-i18n';
+import vi from './locales/vi.json';
+import en from './locales/en.json';
 
 const messages = {
-  vi: {
-    dashboard: 'Bảng điều khiển',
-    login: 'Đăng nhập',
-    logout: 'Đăng xuất',
-    welcome: 'Chào mừng'
-  },
-  en: {
-    dashboard: 'Dashboard',
-    login: 'Login',
-    logout: 'Logout',
-    welcome: 'Welcome'
-  }
+  vi,
+  en
 };
 
 const i18n = createI18n({

@@ -1,0 +1,20 @@
+{
+  "dashboard": "Dashboard",
+  "login": "Login",
+  "logout": "Logout",
+  "welcome": "Welcome",
+  "loginPage": {
+    "title": "SOLAR TPC",
+    "subtitle": "Energy Monitoring & Management System",
+    "username": "Admin Account",
+    "usernamePlaceholder": "Enter account...",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password...",
+    "rememberMe": "Remember me",
+    "button": "Login",
+    "loading": "Authenticating...",
+    "errorEmpty": "Username and password are required.",
+    "errorInvalid": "Invalid username or password.",
+    "errorServer": "Server error, please try again later."
+  }
+}

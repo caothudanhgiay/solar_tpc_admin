@@ -5,8 +5,8 @@
         <div class="login-logo" style="overflow: hidden;">
           <img src="/icon.png" alt="Solar TPC Logo" style="width: 100%; height: 100%; object-fit: contain;" />
         </div>
-        <h1 class="login-title">SOLAR TPC</h1>
-        <p class="login-subtitle">Hệ thống Giám sát & Quản trị Năng lượng</p>
+        <h1 class="login-title">{{ $t('loginPage.title') }}</h1>
+        <p class="login-subtitle">{{ $t('loginPage.subtitle') }}</p>
       </div>
 
       <!-- Error Alert -->
@@ -20,14 +20,13 @@
       <form @submit.prevent="handleLogin">
         <!-- Username input -->
         <div class="form-group">
-          <label class="form-label">Tài khoản quản trị</label>
+          <label class="form-label">{{ $t('loginPage.username') }}</label>
           <div class="input-wrapper">
             <input 
               v-model="username" 
               type="text" 
               class="form-input" 
-              placeholder="Nhập tài khoản (admin)..." 
-              required
+              :placeholder="$t('loginPage.usernamePlaceholder')" 
               :disabled="loading"
             />
             <span class="input-icon">
@@ -41,14 +40,13 @@
 
         <!-- Password input -->
         <div class="form-group">
-          <label class="form-label">Mật khẩu</label>
+          <label class="form-label">{{ $t('loginPage.password') }}</label>
           <div class="input-wrapper">
             <input 
               v-model="password" 
               type="password" 
               class="form-input" 
-              placeholder="Nhập mật khẩu (admin123)..." 
-              required
+              :placeholder="$t('loginPage.passwordPlaceholder')" 
               :disabled="loading"
             />
             <span class="input-icon">
@@ -64,15 +62,15 @@
         <div class="form-actions">
           <label class="checkbox-label">
             <input type="checkbox" v-model="rememberMe" class="checkbox-input" />
-            <span>Ghi nhớ phiên đăng nhập</span>
+            <span>{{ $t('loginPage.rememberMe') }}</span>
           </label>
         </div>
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary" :disabled="loading">
-          <span v-if="loading">Đang xác thực...</span>
+          <span v-if="loading">{{ $t('loginPage.loading') }}</span>
           <template v-else>
-            <span>Đăng Nhập</span>
+            <span>{{ $t('loginPage.button') }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
               <line x1="5" y1="12" x2="19" y2="12"/>
               <polyline points="12 5 19 12 12 19"/>
@@ -92,8 +90,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { apiPost } from '../api/apiClient'
+import { ApiException } from '../exception/exception'
+import { API_AUTH_LOGIN } from '../utils/constants'
+import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const username = ref('')
 const password = ref('')
@@ -101,29 +105,48 @@ const rememberMe = ref(true)
 const errorMsg = ref('')
 const loading = ref(false)
 
-const handleLogin = () => {
+const handleLogin = async () => {
+  // Client-side validation
+  if (!username.value.trim() || !password.value) {
+    errorMsg.value = t('loginPage.errorEmpty')
+    return
+  }
+
   loading.value = true
   errorMsg.value = ''
   
-  // Simulate network request latency
-  setTimeout(() => {
-    // Basic verification - accepts admin / admin123
-    if (username.value.trim() === 'admin' && password.value === 'admin123') {
+  try {
+    const dataJson = {
+      username: username.value.trim(),
+      password: password.value
+    };
+
+    const response = await apiPost(API_AUTH_LOGIN, dataJson);
+    debugger
+    if (response && response.statusCode === 200) {
+      const data = response.data
       // Set session/local tokens
-      localStorage.setItem('solar_admin_token', 'mock-jwt-token-xyz-123')
-      localStorage.setItem('solar_admin_user', JSON.stringify({
-        name: 'Nguyễn Đinh Sơn',
-        role: 'Quản trị viên Hệ thống',
-        avatar: 'S'
-      }))
+      LocalStorageUtils.setToken(data.token)
+      LocalStorageUtils.setUser({
+        name: data.username,
+        role: data.role,
+        avatar: data.username.charAt(0).toUpperCase()
+      })
       
       // Redirect to dashboard
-      router.push({ name: 'Dashboard' })
+      router.push({ name: 'TsoDashboard' })
     } else {
-      errorMsg.value = 'Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!'
-      loading.value = false
+      errorMsg.value = response?.message || t('loginPage.errorServer')
     }
-  }, 1000)
+  } catch (error: any) {
+    if (error instanceof ApiException) {
+      errorMsg.value = error.message
+    } else {
+      errorMsg.value = t('loginPage.errorServer')
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
