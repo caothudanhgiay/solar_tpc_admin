@@ -1,9 +1,11 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh';
+
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/admin/',
+  base: '/admin',
   plugins: [vue()],
   server: {
     proxy: {
