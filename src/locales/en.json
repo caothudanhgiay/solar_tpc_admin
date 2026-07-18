@@ -16,5 +16,22 @@
     "errorEmpty": "Username and password are required.",
     "errorInvalid": "Invalid username or password.",
     "errorServer": "Server error, please try again later."
+  },
+  "button": {
+    "search": "Search",
+    "searchPlaceholder": "Enter keyword to search...",
+    "searchUsernamePlaceholder": "Search by username...",
+    "searchEmailPlaceholder": "Search by email...",
+    "add": "Add",
+    "edit": "Edit",
+    "copy": "Copy",
+    "delete": "Delete",
+    "exportExcel": "Export Excel"
+  },
+  "role": {
+    "root": "Super Administrator (Root)",
+    "admin": "Administrator (Admin)",
+    "user": "Normal User",
+    "guest": "Guest"
   }
 }

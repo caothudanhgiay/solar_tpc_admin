@@ -1,45 +1,48 @@
-/* Design System for Solar TPC Admin Dashboard */
+/* Design System for Solar TPC Admin Dashboard - ArchitectUI Free Style */
 :root {
-  /* Colors - Cyber Solar Tech Theme */
-  --bg-main: #0b0f19;
-  --bg-sidebar: #111827;
-  --bg-card: #1f293d;
-  --bg-card-hover: #27354f;
+  /* Colors - ArchitectUI Free Theme */
+  --bg-main: #f1f4f6;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fa;
 
-  --primary: #f59e0b;
-  /* Solar Yellow/Amber */
-  --primary-glow: rgba(245, 158, 11, 0.15);
-  --primary-border: rgba(245, 158, 11, 0.3);
+  --primary: #3f6ad8;
+  /* Royal Blue */
+  --primary-glow: rgba(63, 106, 216, 0.15);
+  --primary-border: rgba(63, 106, 216, 0.3);
 
-  --success: #10b981;
-  /* Green Tech Eco */
-  --success-glow: rgba(16, 185, 129, 0.15);
+  --success: #3ac47d;
+  /* Mint Green */
+  --success-glow: rgba(58, 196, 125, 0.15);
 
-  --info: #3b82f6;
-  /* Grid Power Blue */
-  --info-glow: rgba(59, 130, 246, 0.15);
+  --info: #16aaff;
+  /* Sky Blue */
+  --info-glow: rgba(22, 170, 255, 0.15);
 
-  --danger: #ef4444;
-  /* Alert Crimson */
-  --danger-glow: rgba(239, 68, 68, 0.15);
+  --warning: #f7b924;
+  /* Amber Yellow */
 
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --danger: #d92550;
+  /* Crimson Red */
+  --danger-glow: rgba(217, 37, 80, 0.15);
 
-  --border-color: #2d3748;
-  --border-color-glow: rgba(245, 158, 11, 0.2);
+  --text-primary: #495057;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
 
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+  --border-color: #e9ecef;
+  --border-color-glow: rgba(63, 106, 216, 0.2);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.15);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --shadow-sm: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+  --shadow-md: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05);
+  --shadow-lg: 0 0.5rem 2rem rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 20px rgba(63, 106, 216, 0.15);
 
   --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.2s ease-in-out;
 
   box-sizing: border-box;
 }
@@ -296,19 +299,18 @@ a:hover {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #d97706 100%);
+  background-color: var(--success);
+  border-color: var(--success);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  background-color: #32ab6e;
+  border-color: #2f9d65;
 }
 
 .btn-primary:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(1px);
 }
 
 .btn:disabled {

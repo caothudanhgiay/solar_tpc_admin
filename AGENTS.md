@@ -6,6 +6,10 @@
 
 ---
 
+## 0. Quy tắc Thiết kế (Design System Rule)
+**BẮT BUỘC:** Luôn luôn thiết kế layout, màu sắc, font chữ, hiệu ứng dựa trên mẫu **ArchitectUI Free Theme**:
+🔗 [https://dashboardpack.com/live-demo-free/?livedemo=2380&v=e14da64a5617](https://dashboardpack.com/live-demo-free/?livedemo=2380&v=e14da64a5617)
+
 ## 1. Kiến trúc Ứng dụng (Architecture)
 
 ```
@@ -13,8 +17,6 @@ src/
 ├── api/
 │   └── apiClient.ts       # Axios instance + interceptors + wrapper functions
 ├── assets/                 # Static assets (images, fonts...)
-├── components/             # Reusable components
-│   └── TsoXxx.vue
 ├── exception/              # Custom exception/error classes
 │   ├── exception.ts        # ApiException class
 │   └── error.ts            # AppError class
@@ -27,6 +29,8 @@ src/
 │   ├── StringUtils.ts      # String helper functions
 │   └── NumberUtils.ts      # Number helper functions
 ├── views/                  # Page-level components (1 view = 1 route)
+│   ├── layout/             # Layout components (Sidebar, Header, etc.)
+│   ├── components/         # Reusable components
 │   ├── TsoLogin.vue
 │   └── TsoDashboard.vue
 ├── i18n.ts                 # i18n configuration
@@ -46,7 +50,8 @@ src/
 
 ### File Organization
 - Views (page-level): `src/views/TsoXxx.vue`
-- Components (reusable): `src/components/TsoXxx.vue`
+- Components (reusable): `src/views/components/TsoXxx.vue`
+- Layout: `src/views/layout/TsoXxx.vue`
 - API logic: `src/api/`
 - Utilities: `src/utils/`
 - Exceptions: `src/exception/`
@@ -239,14 +244,17 @@ export const API_XXX = `${API_BASE}/xxx`
 - App constants: nhóm trong `APP_CONSTANTS` object
 - Env variables: dùng `import.meta.env.VITE_XXX`
 
-## 4. Quy tắc Styling
+## 4. Quy tắc Styling (Design System)
 
-- **Global styles**: `src/style.css` — chứa CSS variables, base styles, utility classes
-- **Component styles**: `<style scoped>` — tránh ảnh hưởng global
-- **Class naming**: CSS class dùng `kebab-case` → `.login-container`, `.glass-panel`
-- **CSS Variables**: Dùng biến CSS cho theming → `var(--text-muted)`, `var(--border-color)`
-- **Animations**: CSS keyframes hoặc transition → `slide-up`, `fade-in`
-- **KHÔNG dùng Tailwind** — project này dùng Vanilla CSS
+- **Giao diện chuẩn:** Luôn bám sát thiết kế, màu sắc và bố cục của **ArchitectUI Free Theme** (Link tham khảo: https://dashboardpack.com/live-demo-free/?livedemo=2380&v=e14da64a5617).
+  - Sử dụng nền trắng (`#fff`) cho Sidebar và Card, hover màu xanh nhạt (`#e0f3ff`).
+  - Màu chủ đạo (Primary) là Royal Blue (`#3f6ad8`).
+  - Hiệu ứng đổ bóng (box-shadow) mềm và nhiều lớp đặc trưng của ArchitectUI.
+- **Global styles**: `src/style.css` — chứa CSS variables (nền, màu sắc, font, shadow), base styles, utility classes.
+- **Component styles**: `<style scoped>` — tránh ảnh hưởng global.
+- **Class naming**: CSS class dùng `kebab-case` → `.login-container`, `.card-header`.
+- **CSS Variables**: Dùng biến CSS cho theming (ví dụ: `var(--bg-main)`, `var(--primary)`).
+- **KHÔNG dùng Tailwind** — project này dùng thuần Vanilla CSS.
 
 ## 5. Quy tắc i18n
 

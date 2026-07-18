@@ -16,5 +16,22 @@
     "errorEmpty": "Tài khoản và mật khẩu không được để trống.",
     "errorInvalid": "Tài khoản hoặc mật khẩu không chính xác.",
     "errorServer": "Lỗi máy chủ, vui lòng thử lại sau."
+  },
+  "button": {
+    "search": "Tìm kiếm",
+    "searchPlaceholder": "Nhập từ khóa tìm kiếm...",
+    "searchUsernamePlaceholder": "Tìm theo tài khoản...",
+    "searchEmailPlaceholder": "Tìm theo email...",
+    "add": "Thêm",
+    "edit": "Sửa",
+    "copy": "Nhân bản",
+    "delete": "Xóa",
+    "exportExcel": "Xuất Excel"
+  },
+  "role": {
+    "root": "Quản trị viên cấp cao (Root)",
+    "admin": "Quản trị viên (Admin)",
+    "user": "Người dùng (User)",
+    "guest": "Khách (Guest)"
   }
 }
