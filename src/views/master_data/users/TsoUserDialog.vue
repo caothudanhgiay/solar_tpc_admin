@@ -37,8 +37,8 @@
 
           <!-- Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeForm">Hủy</button>
-            <button type="submit" class="btn btn-primary" :disabled="loading">
+            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">Hủy</button>
+            <button type="submit" class="btn btn-primary btn-dialog" :disabled="loading">
               <span v-if="loading" class="spinner"></span>
               <span v-else>Lưu thông tin</span>
             </button>
@@ -51,10 +51,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { TsoUserApi } from '../../api/TsoUserApi'
-import TsoSelectOption from '../components/common/TsoSelectOption.vue'
-import { TsoRoleEnumOptions } from '../../utils/TsoRoleEnum'
-import { useFocusTrap } from '../../composables/useFocusTrap'
+import { TsoUserApi } from '../../../api/TsoUserApi'
+import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
+import { TsoRoleEnumOptions } from '../../../utils/TsoRoleEnum'
+import { useFocusTrap } from '../../../composables/useFocusTrap'
 
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
@@ -239,18 +239,25 @@ const submitForm = async () => {
   transition: all 0.15s;
   min-width: 80px;
 }
-.btn-primary {
-  background: #3f6ad8;
-  color: #fff;
+.btn-dialog {
+  width: 150px;
 }
-.btn-primary:hover:not(:disabled) { opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-secondary {
   background: #fff;
-  color: #6c757d;
-  border-color: #dee2e6;
+  border: 1px solid #dee2e6;
+  color: #495057;
 }
-.btn-secondary:hover { background: #f8f9fa; }
+.btn-secondary:hover {
+  background: #f8f9fa;
+}
+.btn-primary {
+  background: #3f6ad8;
+  color: white;
+}
+.btn-primary:hover {
+  background: #3458b3;
+}
+
 
 /* Alert */
 .alert-danger {

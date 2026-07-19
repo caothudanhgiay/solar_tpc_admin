@@ -233,18 +233,7 @@ const submitForm = async () => {
   transition: all 0.15s;
   min-width: 80px;
 }
-.btn-primary {
-  background: #3f6ad8;
-  color: #fff;
-}
-.btn-primary:hover:not(:disabled) { opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn-secondary {
-  background: #fff;
-  color: #6c757d;
-  border-color: #dee2e6;
-}
-.btn-secondary:hover { background: #f8f9fa; }
+
 
 /* Alert */
 .alert-danger {

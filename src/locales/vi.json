@@ -33,5 +33,10 @@
     "admin": "Quản trị viên (Admin)",
     "user": "Người dùng (User)",
     "guest": "Khách (Guest)"
-  }
+  },
+  "message": {
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} người dùng đã chọn?",
+    "deleteError": "Lỗi khi xóa người dùng"
+  },
+  "project": {}
 }

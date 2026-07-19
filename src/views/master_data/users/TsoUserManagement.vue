@@ -115,10 +115,10 @@
     </div>
 
     <!-- Dialog -->
-    <TsoUserManagementDialog
-      v-if="showModal"
-      :initialData="form"
-      @close="closeForm"
+    <TsoUserDialog 
+      v-if="showModal" 
+      :initialData="form" 
+      @close="closeForm" 
       @saved="onSaved"
     />
   </div>
@@ -127,10 +127,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { TsoUserApi } from '../../api/TsoUserApi'
-import { TsoRoleEnumOptions } from '../../utils/TsoRoleEnum'
-import TsoUserManagementDialog from './TsoUserManagementDialog.vue'
-import { useFocusTrap } from '../../composables/useFocusTrap'
+import { TsoUserApi } from '../../../api/TsoUserApi'
+import { TsoRoleEnumOptions } from '../../../utils/TsoRoleEnum'
+import TsoUserDialog from './TsoUserDialog.vue'
+import TsoChangePasswordDialog from '../../admin/TsoChangePasswordDialog.vue'
+import { useFocusTrap } from '../../../composables/useFocusTrap'
 
 const { t } = useI18n()
 const mainContainerRef = ref<HTMLElement | null>(null)
@@ -326,7 +327,6 @@ onMounted(fetchUsers)
 }
 .card-search .btn:hover:not(:disabled) { opacity: 0.88; }
 .card-search .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.card-search .btn-primary { background: #3f6ad8; color: #fff; }
 
 .search-wrap {
   position: relative;

@@ -2,9 +2,8 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '../views/TsoLogin.vue'
 import Dashboard from '../views/TsoDashboard.vue'
 import Layout from '../views/layout/TsoLayout.vue'
-import ProjectList from '../views/projects/TsoProjectList.vue'
-import ProjectForm from '../views/projects/TsoProjectForm.vue'
-import UserManagement from '../views/users/TsoUserManagement.vue'
+import ProjectManagement from '../views/master_data/projects/TsoProjectManagement.vue'
+import UserManagement from '../views/master_data/users/TsoUserManagement.vue'
 import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const routes: Array<RouteRecordRaw> = [
@@ -26,13 +25,8 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'projects',
-        name: 'TsoProjectList',
-        component: ProjectList
-      },
-      {
-        path: 'projects/form/:id?',
-        name: 'TsoProjectForm',
-        component: ProjectForm
+        name: 'TsoProjectManagement',
+        component: ProjectManagement
       },
       {
         path: 'users',

@@ -299,19 +299,48 @@ a:hover {
 }
 
 .btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) { opacity: 0.9; }
+.btn-primary:active:not(:disabled) { transform: translateY(1px); }
+
+.btn-secondary {
+  background-color: #fff;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+.btn-secondary:hover:not(:disabled) { background-color: var(--bg-card-hover); }
+
+.btn-success {
   background-color: var(--success);
   border-color: var(--success);
   color: #fff;
 }
+.btn-success:hover:not(:disabled) { opacity: 0.9; }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: #32ab6e;
-  border-color: #2f9d65;
+.btn-info {
+  background-color: var(--info);
+  border-color: var(--info);
+  color: #fff;
 }
+.btn-info:hover:not(:disabled) { opacity: 0.9; }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(1px);
+.btn-warning {
+  background-color: var(--warning);
+  border-color: var(--warning);
+  color: #fff;
 }
+.btn-warning:hover:not(:disabled) { opacity: 0.9; }
+
+.btn-danger {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) { opacity: 0.9; }
 
 .btn:disabled {
   opacity: 0.6;

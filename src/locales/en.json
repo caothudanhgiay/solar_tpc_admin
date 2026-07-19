@@ -33,5 +33,10 @@
     "admin": "Administrator (Admin)",
     "user": "Normal User",
     "guest": "Guest"
-  }
+  },
+  "message": {
+    "confirmDelete": "Are you sure you want to delete {count} selected users?",
+    "deleteError": "Error deleting users"
+  },
+  "project": {}
 }
