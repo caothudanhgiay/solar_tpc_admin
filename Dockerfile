@@ -1,17 +1,15 @@
 # Stage 1: Build the Vue application
-FROM node:20-alpine AS builder
-
-# libc6-compat cần thiết cho Alpine và một số native bindings (rolldown, etc.)
-RUN apk add --no-cache libc6-compat
+# Dùng node:22-slim (Debian/glibc) thay Alpine (musl) vì Vite 8/rolldown
+# native bindings chỉ tương thích tốt với glibc, không phải musl
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files và install dependencies
+# Dùng npm install thay npm ci để npm tự resolve đúng
+# platform-specific optional dependencies (rolldown native binding)
 COPY package.json ./
-
-# Dùng npm install (không dùng npm ci) để npm tự resolve đúng
-# platform-specific optional dependencies cho linux-x64-musl (rolldown native binding của Vite 8)
-RUN npm install --prefer-offline
+RUN npm install
 
 # Copy the rest of the application
 COPY . .
