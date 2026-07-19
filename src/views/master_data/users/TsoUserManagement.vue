@@ -130,7 +130,6 @@ import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import { TsoRoleEnumOptions } from '../../../utils/TsoRoleEnum'
 import TsoUserDialog from './TsoUserDialog.vue'
-import TsoChangePasswordDialog from '../../admin/TsoChangePasswordDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
 const { t } = useI18n()

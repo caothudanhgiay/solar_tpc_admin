@@ -255,7 +255,7 @@ const submitForm = async () => {
     const formData = new FormData()
     
     // Prepare payload
-    const payload = { ...form.value }
+    const payload: any = { ...form.value }
     if (!payload.startDate) payload.startDate = null
     if (!payload.endDate) payload.endDate = null
 

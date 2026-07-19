@@ -137,7 +137,7 @@ import { TsoProjectApi } from '../../../api/TsoProjectApi'
 import TsoProjectDialog from './TsoProjectDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
-const { t } = useI18n()
+useI18n()
 
 const mainContainerRef = ref<HTMLElement | null>(null)
 useFocusTrap(mainContainerRef, { autoFocus: false })
@@ -168,15 +168,6 @@ const toggleAll = (e: Event) => {
   selectedIds.value = checked ? filteredProjects.value.map(p => p.projectId) : []
 }
 
-const getStatusLabelKey = (status: number) => {
-  const opt = projectStatuses.value.find(o => o.value === status)
-  return opt ? opt.labelKey : ''
-}
-const getStatusBadgeClass = (status: number) => {
-  if (status === 3) return 'badge-primary'
-  if (status === 1 || status === 2) return 'badge-warning'
-  return 'badge-danger'
-}
 
 const handleSearch = () => {
   searchProjectName.value = tempSearchProjectName.value
