@@ -59,7 +59,9 @@
             </div>
             <div class="form-group full-width">
               <label class="form-label">Mô tả</label>
-              <textarea v-model="form.description" class="form-control" rows="3"></textarea>
+              <div style="background-color: white; border-radius: 4px; margin-bottom: 20px;">
+                <QuillEditor v-model:content="form.description" contentType="html" theme="snow" toolbar="full" />
+              </div>
             </div>
             <div class="form-group full-width">
               <label class="form-label">Ảnh đại diện (Featured Image)</label>
@@ -135,6 +137,8 @@ import { ref, onMounted, computed } from 'vue'
 import { TsoProjectApi } from '../../../api/TsoProjectApi'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
@@ -310,6 +314,25 @@ const submitForm = async () => {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Fix Quill Editor Overlap */
+:deep(.ql-editor) {
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: inherit;
+  font-size: 14px;
+}
+:deep(.ql-container.ql-snow) {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  height: auto !important; /* Force container to expand */
+  min-height: 200px;
+}
+:deep(.ql-toolbar.ql-snow) {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 /* Dialog */
