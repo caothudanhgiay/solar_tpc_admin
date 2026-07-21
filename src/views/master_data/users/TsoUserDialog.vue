@@ -28,11 +28,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Quyền hạn (Role) <span class="required">*</span></label>
-            <TsoSelectOption v-model="form.roleId" :options="TsoRoleEnumOptions" />
+            <TsoSelectOption v-model="form.roleId" :options="roles" />
           </div>
           <div class="form-group">
             <label class="form-label">Access ID <span class="required">*</span></label>
-            <input type="number" v-model="form.accessId" required class="form-control" />
+            <TsoSelectOption v-model="form.accessId" :options="accesses" />
           </div>
 
           <!-- Footer -->
@@ -53,14 +53,15 @@
 import { ref, onMounted } from 'vue'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
-import { TsoRoleEnumOptions } from '../../../utils/TsoRoleEnum'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
 
 const props = defineProps<{
-  initialData: any
+  initialData: any,
+  roles: any[],
+  accesses: any[]
 }>()
 
 const emit = defineEmits(['close', 'saved'])

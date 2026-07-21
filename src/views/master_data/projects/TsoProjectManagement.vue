@@ -258,7 +258,7 @@ const fetchProjects = async () => {
     const res = await TsoProjectApi.getProjectsPage(page.value, size.value)
     if (res.data.statusCode === 200) {
       const payload = res.data.data
-      console.log('API Response payload:', payload.page?.content);
+
       projects.value = payload.page?.content || []
       projectStatuses.value = payload.statuses || []
       selectedIds.value = []

@@ -6,7 +6,7 @@
   >
     <option value="" disabled v-if="placeholder">{{ placeholder }}</option>
     <option v-for="opt in options" :key="opt.value" :value="opt.value">
-      {{ $t(opt.labelKey) }}
+      {{ opt.labelKey }}
     </option>
   </select>
 </template>

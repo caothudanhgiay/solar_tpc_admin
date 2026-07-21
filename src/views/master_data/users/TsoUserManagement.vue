@@ -83,9 +83,11 @@
                 <td class="fw-bold">{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>
-                  <span class="badge badge-primary">{{ getRoleName(user.roleId) }}</span>
+                  <span class="badge badge-primary">{{ user.roleName }}</span>
                 </td>
-                <td class="text-muted">{{ user.accessId }}</td>
+                <td>
+                  <span class="badge badge-warning">{{ user.accessName }}</span>
+                </td>
               </tr>
               <tr v-if="paginatedUsers.length === 0">
                 <td colspan="6" class="empty-row">Không có dữ liệu</td>
@@ -118,6 +120,8 @@
     <TsoUserDialog 
       v-if="showModal" 
       :initialData="form" 
+      :roles="rolesList"
+      :accesses="accessesList"
       @close="closeForm" 
       @saved="onSaved"
     />
@@ -128,7 +132,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../../api/TsoUserApi'
-import { TsoRoleEnumOptions } from '../../../utils/TsoRoleEnum'
 import TsoUserDialog from './TsoUserDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
@@ -137,6 +140,8 @@ const mainContainerRef = ref<HTMLElement | null>(null)
 useFocusTrap(mainContainerRef, { autoFocus: false })
 
 const users = ref<any[]>([])
+const rolesList = ref<any[]>([])
+const accessesList = ref<any[]>([])
 const showModal = ref(false)
 const tempSearchUsername = ref('')
 const tempSearchEmail = ref('')
@@ -163,8 +168,8 @@ const isAllSelected = computed(() => paginatedUsers.value.length > 0 && selected
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
 
 const getRoleName = (roleId: number) => {
-  const role = TsoRoleEnumOptions.find(r => r.value === roleId)
-  return role ? t(role.labelKey) : roleId
+  const user = users.value.find(u => u.roleId === roleId)
+  return user ? user.roleName : roleId
 }
 
 const toggleAll = (e: Event) => {
@@ -207,7 +212,10 @@ const fetchUsers = async () => {
   try {
     const res = await TsoUserApi.getAllUsers()
     if (res && res.statusCode === 200) { 
-      users.value = res.data || []; 
+      const payload = res.data
+      users.value = payload.page?.content || []; 
+      rolesList.value = payload.roles || [];
+      accessesList.value = payload.accesses || [];
       selectedIds.value = [] 
     }
   } catch (error) { console.error('Failed to fetch users', error) }
