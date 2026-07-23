@@ -4,19 +4,19 @@
     <div class="card">
       <!-- Card Header: Buttons Row -->
       <div class="action-buttons">
-          <button class="btn btn-primary" @click="openForm(null)">
+          <button class="btn btn-primary" :disabled="!canAddUser" @click="openForm(null)">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             {{ $t('button.add') }}
           </button>
-          <button class="btn btn-primary" :disabled="!isSingleSelected" @click="handleEdit">
+          <button class="btn btn-primary" :disabled="!isSingleSelected || !canEditSelected" @click="handleEdit">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             {{ $t('button.edit') }}
           </button>
-          <button class="btn btn-info" :disabled="!isSingleSelected" @click="handleCopy">
+          <button class="btn btn-info" :disabled="!isSingleSelected || !canAddUser" @click="handleCopy">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             {{ $t('button.copy') }}
           </button>
-          <button class="btn btn-danger" :disabled="selectedIds.length === 0" @click="handleDelete">
+          <button class="btn btn-danger" :disabled="selectedIds.length === 0 || !canDeleteSelected" @click="handleDelete">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             {{ $t('button.delete') }}
           </button>
@@ -82,12 +82,8 @@
                 <td class="text-muted">#{{ user.userId }}</td>
                 <td class="fw-bold">{{ user.username }}</td>
                 <td>{{ user.email }}</td>
-                <td>
-                  <span class="badge badge-primary">{{ user.roleName }}</span>
-                </td>
-                <td>
-                  <span class="badge badge-warning">{{ user.accessName }}</span>
-                </td>
+                <td>{{ user.roleName }}</td>
+                <td>{{ user.accessName }}</td>
               </tr>
               <tr v-if="paginatedUsers.length === 0">
                 <td colspan="6" class="empty-row">Không có dữ liệu</td>
@@ -134,6 +130,7 @@ import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import TsoUserDialog from './TsoUserDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
+import { LocalStorageUtils } from '../../../utils/LocalStorageUtils'
 
 const { t } = useI18n()
 const mainContainerRef = ref<HTMLElement | null>(null)
@@ -166,6 +163,43 @@ const endIndex = computed(() => startIndex.value + pageSize.value)
 const paginatedUsers = computed(() => filteredUsers.value.slice(startIndex.value, endIndex.value))
 const isAllSelected = computed(() => paginatedUsers.value.length > 0 && selectedIds.value.length === paginatedUsers.value.length)
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
+
+const currentUser = computed(() => LocalStorageUtils.getUser())
+const canAddUser = computed(() => {
+  const role = currentUser.value?.role;
+  return role === '1' || role === '2'; // Root and Admin can add
+})
+
+const canEditSelected = computed(() => {
+  if (!isSingleSelected.value) return false;
+  const role = currentUser.value?.role;
+  if (role === '1') return true; // Root can edit anyone
+  if (role === '3') return false; // User cannot edit anyone
+  // Admin logic
+  const selectedUser = users.value.find(u => u.userId === selectedIds.value[0]);
+  if (!selectedUser) return false;
+  // Admin cannot edit Root (1), and cannot edit other Admins (2) unless it's themselves
+  if (selectedUser.roleId === 1) return false;
+  if (selectedUser.roleId === 2 && selectedUser.userId !== currentUser.value?.userId) return false;
+  return true;
+})
+
+const canDeleteSelected = computed(() => {
+  if (selectedIds.value.length === 0) return false;
+  const role = currentUser.value?.role;
+  if (role === '1') return true;
+  if (role === '3') return false;
+  
+  // Admin logic: check if any selected user is Root or another Admin
+  const hasInvalid = selectedIds.value.some(id => {
+    const user = users.value.find(u => u.userId === id);
+    if (!user) return false;
+    if (user.roleId === 1) return true;
+    if (user.roleId === 2 && user.userId !== currentUser.value?.userId) return true;
+    return false;
+  });
+  return !hasInvalid;
+})
 
 const getRoleName = (roleId: number) => {
   const user = users.value.find(u => u.roleId === roleId)
@@ -247,8 +281,8 @@ const exportExcel = () => {
       u.userId,
       `"${(u.username || '').replace(/"/g, '""')}"`,
       `"${(u.email || '').replace(/"/g, '""')}"`,
-      `"${getRoleName(u.roleId)}"`,
-      u.accessId
+      `"${u.roleName}"`,
+      `"${u.accessName}"`
     ].join(",")
   });
 

@@ -104,13 +104,25 @@ const submitForm = async () => {
     emit('saved')
   } catch (error: any) {
     console.error('Save failed', error)
-    if (error.response && error.response.data && error.response.data.message) {
+    if (error instanceof Error && (error as any).data) {
+      const apiEx = error as any;
+      errorMsg.value = apiEx.data.message || apiEx.message;
+      if (apiEx.data.data && typeof apiEx.data.data === 'object') {
+        const errors = Object.values(apiEx.data.data).join(', ');
+        if (errors) {
+          errorMsg.value += ': ' + errors;
+        }
+      }
+    } else if (error.response && error.response.data && error.response.data.message) {
       errorMsg.value = error.response.data.message
-      if (error.response.data.data) {
-        errorMsg.value += ' ' + JSON.stringify(error.response.data.data)
+      if (error.response.data.data && typeof error.response.data.data === 'object') {
+        const errors = Object.values(error.response.data.data).join(', ');
+        if (errors) {
+          errorMsg.value += ': ' + errors;
+        }
       }
     } else {
-      errorMsg.value = 'Có lỗi xảy ra khi lưu dữ liệu.'
+      errorMsg.value = error.message || 'Có lỗi xảy ra khi lưu dữ liệu.'
     }
   } finally {
     loading.value = false
