@@ -38,5 +38,20 @@
     "confirmDelete": "Are you sure you want to delete {count} selected users?",
     "deleteError": "Error deleting users"
   },
-  "project": {}
+  "project": {},
+  "asset": {
+    "status": {
+      "not_used": "Not Used",
+      "in_use": "In Use",
+      "stopped": "Stopped",
+      "damaged": "Damaged",
+      "maintenance": "Under Maintenance",
+      "borrowed": "Borrowed",
+      "rented": "Rented",
+      "expired": "Expired"
+    }
+  },
+  "menu": {
+    "asset_management": "Asset Management"
+  }
 }

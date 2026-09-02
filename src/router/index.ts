@@ -4,6 +4,7 @@ import Dashboard from '../views/TsoDashboard.vue'
 import Layout from '../views/layout/TsoLayout.vue'
 import ProjectManagement from '../views/master_data/projects/TsoProjectManagement.vue'
 import UserManagement from '../views/master_data/users/TsoUserManagement.vue'
+import AssetManagement from '../views/master_data/assets/TsoAssetManagement.vue'
 import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const routes: Array<RouteRecordRaw> = [
@@ -32,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'users',
         name: 'TsoUserManagement',
         component: UserManagement
+      },
+      {
+        path: 'assets',
+        name: 'TsoAssetManagement',
+        component: AssetManagement
       }
     ]
   },

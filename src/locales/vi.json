@@ -38,5 +38,20 @@
     "confirmDelete": "Bạn có chắc chắn muốn xóa {count} người dùng đã chọn?",
     "deleteError": "Lỗi khi xóa người dùng"
   },
-  "project": {}
+  "project": {},
+  "asset": {
+    "status": {
+      "not_used": "Chưa sử dụng",
+      "in_use": "Đang sử dụng",
+      "stopped": "Dừng sử dụng",
+      "damaged": "Bị hư hỏng",
+      "maintenance": "Đang bảo trì",
+      "borrowed": "Cho mượn",
+      "rented": "Cho thuê",
+      "expired": "Đã hết hạn"
+    }
+  },
+  "menu": {
+    "asset_management": "Quản lí tài sản"
+  }
 }
