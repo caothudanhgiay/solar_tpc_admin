@@ -26,7 +26,9 @@
     "edit": "Edit",
     "copy": "Copy",
     "delete": "Delete",
-    "exportExcel": "Export Excel"
+    "exportExcel": "Export Excel",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "role": {
     "root": "Super Administrator (Root)",
@@ -35,8 +37,12 @@
     "guest": "Guest"
   },
   "message": {
-    "confirmDelete": "Are you sure you want to delete {count} selected users?",
-    "deleteError": "Error deleting users"
+    "confirmDelete": "Are you sure you want to delete {count} selected records?",
+    "deleteError": "Error deleting data",
+    "no_data": "No data",
+    "no_data_export": "No data to export!",
+    "confirm_delete": "Are you sure you want to delete {count} selected records?",
+    "delete_error": "Error deleting data"
   },
   "project": {},
   "asset": {
@@ -52,6 +58,20 @@
     }
   },
   "menu": {
-    "asset_management": "Asset Management"
+    "asset_management": "Asset Management",
+    "service_management": "Service Management"
+  },
+  "service": {
+    "add_title": "Add Service",
+    "edit_title": "Edit Service",
+    "code": "Service Code",
+    "name": "Service Name",
+    "image": "Service Image",
+    "current_image": "Current image",
+    "description": "Service Description",
+    "group": "Service Group",
+    "type": "Service Type",
+    "status": "Status",
+    "search_placeholder": "Search by name/code..."
   }
 }

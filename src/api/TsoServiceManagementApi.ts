@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LocalStorageUtils } from '../utils/LocalStorageUtils';
 
-const API_BASE = '/api/v1/assets';
+const API_BASE = '/api/v1/services';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -18,14 +18,14 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export const TsoAssetManagementApi = {
-  getAssetsPage(page: number, size: number, keyword?: string) {
+export const TsoServiceManagementApi = {
+  getServicesPage(page: number, size: number, keyword?: string) {
     return apiClient.get('/page', { params: { page, size, keyword } });
   },
-  getAssetById(id: number) {
+  getServiceById(id: number) {
     return apiClient.get(`/${id}`);
   },
-  createAsset(data: any, file?: File) {
+  createService(data: any, file?: File) {
     const formData = new FormData();
     formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
     if (file) formData.append('file', file);
@@ -33,7 +33,7 @@ export const TsoAssetManagementApi = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
-  updateAsset(id: number, data: any, file?: File) {
+  updateService(id: number, data: any, file?: File) {
     const formData = new FormData();
     formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
     if (file) formData.append('file', file);
@@ -41,7 +41,7 @@ export const TsoAssetManagementApi = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
-  deleteAsset(id: number) {
+  deleteService(id: number) {
     return apiClient.delete(`/${id}`);
   },
 };

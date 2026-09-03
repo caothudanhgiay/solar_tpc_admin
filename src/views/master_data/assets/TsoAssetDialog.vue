@@ -16,8 +16,19 @@
         <form @submit.prevent="submitForm">
           <div class="form-grid">
             <div class="form-group">
+              <label class="form-label">Mã tài sản <span class="required">*</span></label>
+              <input type="text" v-model="form.assetCode" required class="form-control" />
+            </div>
+            <div class="form-group">
               <label class="form-label">Tên tài sản <span class="required">*</span></label>
               <input type="text" v-model="form.assetName" required class="form-control" />
+            </div>
+            <div class="form-group full-width">
+              <label class="form-label">Ảnh thiết bị</label>
+              <input type="file" @change="onFileChange" accept="image/*" class="form-control" />
+              <div v-if="form.assetImage && !selectedFile" style="margin-top: 8px;">
+                <span class="text-muted">Đã có ảnh: {{ form.assetImage }}</span>
+              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Nhóm tài sản <span class="required">*</span></label>
@@ -94,9 +105,12 @@ const emit = defineEmits(['close', 'saved'])
 const isEdit = ref(false)
 const loading = ref(false)
 const errorMsg = ref('')
+const selectedFile = ref<File | null>(null)
 
 const form = ref({
   assetId: null as number | null,
+  assetCode: '',
+  assetImage: '',
   assetName: '',
   assetGroup: '',
   assetType: '',
@@ -119,11 +133,22 @@ onMounted(() => {
       endDate: props.initialData.endDate ? props.initialData.endDate.substring(0, 16) : '',
       dateOfPurchase: props.initialData.dateOfPurchase ? props.initialData.dateOfPurchase.substring(0, 16) : ''
     }
+    selectedFile.value = null
   }
 })
 
 const closeForm = () => {
+  selectedFile.value = null
   emit('close')
+}
+
+const onFileChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    selectedFile.value = target.files[0]
+  } else {
+    selectedFile.value = null
+  }
 }
 
 const submitForm = async () => {
@@ -132,9 +157,9 @@ const submitForm = async () => {
     errorMsg.value = ''
     const payload = { ...form.value }
     if (isEdit.value) {
-      await TsoAssetManagementApi.updateAsset(form.value.assetId!, payload)
+      await TsoAssetManagementApi.updateAsset(form.value.assetId!, payload, selectedFile.value || undefined)
     } else {
-      await TsoAssetManagementApi.createAsset(payload)
+      await TsoAssetManagementApi.createAsset(payload, selectedFile.value || undefined)
     }
     emit('saved')
   } catch (e: any) {

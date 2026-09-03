@@ -26,7 +26,9 @@
     "edit": "Sửa",
     "copy": "Nhân bản",
     "delete": "Xóa",
-    "exportExcel": "Xuất Excel"
+    "exportExcel": "Xuất Excel",
+    "save": "Lưu",
+    "cancel": "Hủy bỏ"
   },
   "role": {
     "root": "Quản trị viên cấp cao (Root)",
@@ -35,8 +37,12 @@
     "guest": "Khách (Guest)"
   },
   "message": {
-    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} người dùng đã chọn?",
-    "deleteError": "Lỗi khi xóa người dùng"
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
+    "deleteError": "Lỗi khi xóa dữ liệu",
+    "no_data": "Không có dữ liệu",
+    "no_data_export": "Không có dữ liệu để xuất!",
+    "confirm_delete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
+    "delete_error": "Lỗi khi xóa dữ liệu"
   },
   "project": {},
   "asset": {
@@ -52,6 +58,20 @@
     }
   },
   "menu": {
-    "asset_management": "Quản lí tài sản"
+    "asset_management": "Quản lí tài sản",
+    "service_management": "Quản lý dịch vụ"
+  },
+  "service": {
+    "add_title": "Thêm mới Dịch vụ",
+    "edit_title": "Cập nhật Dịch vụ",
+    "code": "Mã dịch vụ",
+    "name": "Tên dịch vụ",
+    "image": "Ảnh dịch vụ",
+    "current_image": "Đã có ảnh",
+    "description": "Mô tả dịch vụ",
+    "group": "Nhóm dịch vụ",
+    "type": "Loại dịch vụ",
+    "status": "Trạng thái",
+    "search_placeholder": "Tìm theo tên/mã dịch vụ..."
   }
 }

@@ -43,6 +43,16 @@
           </li>
           <li
             class="nav-item"
+            :class="{ active: $route.path.startsWith('/services') }"
+            @click="router.push('/services')"
+          >
+            <span class="nav-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </span>
+            <span class="nav-text">{{ $t('menu.service_management') || 'Quản lý dịch vụ' }}</span>
+          </li>
+          <li
+            class="nav-item"
             :class="{ active: $route.path.startsWith('/users') }"
             @click="router.push('/users')"
           >
@@ -152,6 +162,7 @@ const routeTitle = computed(() => {
   if (route.path === '/dashboard') return 'Dashboard'
   if (route.path.startsWith('/projects')) return 'Sản phẩm'
   if (route.path.startsWith('/assets')) return 'Quản lí tài sản'
+  if (route.path.startsWith('/services')) return 'Quản lý Dịch vụ'
   if (route.path.startsWith('/users')) return 'Quản lý Người dùng'
   return ''
 })

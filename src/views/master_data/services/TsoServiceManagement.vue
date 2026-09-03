@@ -1,8 +1,6 @@
 <template>
-  <div class="assets-content" ref="mainContainerRef">
-    <!-- Card: Toolbar + Table -->
+  <div class="services-content" ref="mainContainerRef">
     <div class="card">
-      <!-- Card Header: Buttons Row -->
       <div class="action-buttons">
           <button class="btn btn-primary" @click="openForm(null)">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -32,7 +30,7 @@
           <input
             type="text"
             v-model="tempSearchName"
-            placeholder="Tìm theo tên/nhóm tài sản..."
+            :placeholder="$t('service.search_placeholder')"
             class="search-input"
             @keyup.enter="handleSearch"
           />
@@ -44,7 +42,6 @@
         </button>
       </div>
 
-      <!-- Card Body: Table -->
       <div class="card-body">
         <div class="table-responsive">
           <table class="table">
@@ -54,57 +51,42 @@
                   <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
                 </th>
                 <th style="width: 50px; text-align: center;">STT</th>
-                <th>Mã Tài Sản</th>
-                <th>Ảnh Thiết Bị</th>
-                <th>Tên Tài Sản</th>
-                <th>Nhóm</th>
-                <th>Loại</th>
-                <th>Người Cấp</th>
-                <th>Người Dùng</th>
-                <th>Ngày Bắt Đầu</th>
-                <th>Ngày Hết Hạn</th>
-                <th>Giá</th>
-                <th>Bảo Hành (Tháng)</th>
-                <th>Ngày Mua</th>
-                <th>Trạng Thái</th>
+                <th>{{ $t('service.code') }}</th>
+                <th>{{ $t('service.image') }}</th>
+                <th>{{ $t('service.name') }}</th>
+                <th>{{ $t('service.group') }}</th>
+                <th>{{ $t('service.type') }}</th>
+                <th>{{ $t('service.status') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(item, index) in assets"
-                :key="item.assetId"
-                :class="{ 'row-selected': selectedIds.includes(item.assetId) }"
+                v-for="(item, index) in services"
+                :key="item.serviceId"
+                :class="{ 'row-selected': selectedIds.includes(item.serviceId) }"
               >
                 <td class="td-check">
-                  <input type="checkbox" :value="item.assetId" v-model="selectedIds" />
+                  <input type="checkbox" :value="item.serviceId" v-model="selectedIds" />
                 </td>
                 <td style="text-align: center;">{{ index + 1 + page * size }}</td>
-                <td>{{ item.assetCode }}</td>
+                <td>{{ item.serviceCode }}</td>
                 <td>
-                  <span v-if="item.assetImage" class="truncate-desc" :title="item.assetImage">{{ item.assetImage }}</span>
+                  <span v-if="item.serviceImage" class="truncate-desc" :title="item.serviceImage">{{ item.serviceImage }}</span>
                 </td>
-                <td class="fw-bold">{{ item.assetName }}</td>
-                <td>{{ item.assetGroup }}</td>
-                <td>{{ item.assetType }}</td>
-                <td>{{ item.provider }}</td>
-                <td>{{ item.currentUsr }}</td>
-                <td>{{ item.startDate ? item.startDate.substring(0, 10) : '' }}</td>
-                <td>{{ item.endDate ? item.endDate.substring(0, 10) : '' }}</td>
-                <td>{{ item.price }}</td>
-                <td>{{ item.warrantyPeriod }}</td>
-                <td>{{ item.dateOfPurchase ? item.dateOfPurchase.substring(0, 10) : '' }}</td>
-                <td>{{ item.assetStatusName }}</td>
+                <td class="fw-bold">{{ item.serviceName }}</td>
+                <td>{{ item.serviceGroup }}</td>
+                <td>{{ item.serviceType }}</td>
+                <td>{{ item.serviceStatusName }}</td>
               </tr>
-              <tr v-if="assets.length === 0">
-                <td colspan="13" class="empty-row">Không có dữ liệu</td>
+              <tr v-if="services.length === 0">
+                <td colspan="8" class="empty-row">{{ $t('message.no_data') || 'Không có dữ liệu' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Card Footer: Pagination -->
-      <div class="card-footer" v-if="assets.length > 0">
+      <div class="card-footer" v-if="services.length > 0">
         <span class="showing-text">
           Hiển thị trang {{ page + 1 }}
         </span>
@@ -116,11 +98,10 @@
       </div>
     </div>
 
-    <!-- Dialog -->
-    <TsoAssetDialog
+    <TsoServiceDialog
       v-if="showModal"
       :initialData="form"
-      :assetStatuses="assetStatuses"
+      :serviceStatuses="serviceStatuses"
       @close="closeForm"
       @saved="onSaved"
     />
@@ -130,17 +111,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { TsoAssetManagementApi } from '../../../api/TsoAssetManagementApi'
-import TsoAssetDialog from './TsoAssetDialog.vue'
+import { TsoServiceManagementApi } from '../../../api/TsoServiceManagementApi'
+import TsoServiceDialog from './TsoServiceDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
-useI18n()
+const { t } = useI18n()
 
 const mainContainerRef = ref<HTMLElement | null>(null)
 useFocusTrap(mainContainerRef, { autoFocus: false })
 
-const assets = ref<any[]>([])
-const assetStatuses = ref<any[]>([])
+const services = ref<any[]>([])
+const serviceStatuses = ref<any[]>([])
 const showModal = ref(false)
 const tempSearchName = ref('')
 const searchName = ref('')
@@ -151,20 +132,20 @@ const page = ref(0)
 const size = ref(10)
 const isLastPage = ref(true)
 
-const isAllSelected = computed(() => assets.value.length > 0 && selectedIds.value.length === assets.value.length)
+const isAllSelected = computed(() => services.value.length > 0 && selectedIds.value.length === services.value.length)
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
 
 const toggleAll = (e: Event) => {
   const checked = (e.target as HTMLInputElement).checked
-  selectedIds.value = checked ? assets.value.map(p => p.assetId) : []
+  selectedIds.value = checked ? services.value.map(p => p.serviceId) : []
 }
 
-const fetchAssets = async () => {
+const fetchServices = async () => {
   try {
-    const res = await TsoAssetManagementApi.getAssetsPage(page.value, size.value, searchName.value)
-    if (res.data.code === 200) {
-      assets.value = res.data.data.page.content
-      assetStatuses.value = res.data.data.statuses
+    const res = await TsoServiceManagementApi.getServicesPage(page.value, size.value, searchName.value)
+    if (res.data.statusCode === 200) {
+      services.value = res.data.data.page.content
+      serviceStatuses.value = res.data.data.statuses
       isLastPage.value = res.data.data.page.last
     }
   } catch (e) {
@@ -175,7 +156,7 @@ const fetchAssets = async () => {
 const handleSearch = () => {
   searchName.value = tempSearchName.value
   page.value = 0
-  fetchAssets()
+  fetchServices()
 }
 
 const openForm = (data: any) => {
@@ -189,75 +170,67 @@ const closeForm = () => {
 }
 
 const onSaved = () => {
-  fetchAssets()
+  fetchServices()
   closeForm()
 }
 
 const handleEdit = () => {
   if (selectedIds.value.length !== 1) return
-  const item = assets.value.find(p => p.assetId === selectedIds.value[0])
+  const item = services.value.find(p => p.serviceId === selectedIds.value[0])
   if (item) openForm(item)
 }
 
 const copyItem = (item: any) => {
   const cloned = JSON.parse(JSON.stringify(item))
-  delete cloned.assetId
+  delete cloned.serviceId
   openForm(cloned)
 }
 
 const handleCopy = () => {
   if (selectedIds.value.length !== 1) return
-  const item = assets.value.find(p => p.assetId === selectedIds.value[0])
+  const item = services.value.find(p => p.serviceId === selectedIds.value[0])
   if (item) copyItem(item)
 }
 
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
-  if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.value.length} tài sản đã chọn?`)) {
+  if (confirm(t('message.confirm_delete', { count: selectedIds.value.length }) || `Bạn có chắc chắn muốn xóa ${selectedIds.value.length} dịch vụ đã chọn?`)) {
     try {
       for (const id of selectedIds.value) {
-        await TsoAssetManagementApi.deleteAsset(id)
+        await TsoServiceManagementApi.deleteService(id)
       }
       selectedIds.value = []
-      fetchAssets()
-    } catch (e) { alert('Có lỗi khi xóa') }
+      fetchServices()
+    } catch (e) { alert(t('message.delete_error') || 'Có lỗi khi xóa') }
   }
 }
 
 const changePage = (newPage: number) => {
   page.value = newPage
-  fetchAssets()
+  fetchServices()
 }
 
 const handleExportExcel = () => {
-  if (assets.value.length === 0) {
-    alert("Không có dữ liệu để xuất!");
+  if (services.value.length === 0) {
+    alert(t('message.no_data_export') || "Không có dữ liệu để xuất!");
     return;
   }
   const headers = [
-    'STT', 'Mã Tài Sản', 'Ảnh Thiết Bị', 'Tên Tài Sản', 'Nhóm', 'Loại', 'Người Cấp', 'Người Dùng', 
-    'Ngày Bắt Đầu', 'Ngày Hết Hạn', 'Giá', 'Bảo Hành (Tháng)', 'Ngày Mua', 'Trạng Thái'
+    'STT', t('service.code'), t('service.image'), t('service.name'), t('service.group'), t('service.type'), t('service.status')
   ]
   
   let csvContent = "\uFEFF" // BOM for UTF-8
   csvContent += headers.map(h => `"${h}"`).join(',') + '\n'
   
-  assets.value.forEach((item, index) => {
+  services.value.forEach((item, index) => {
     const row = [
       index + 1 + page.value * size.value,
-      item.assetCode || '',
-      item.assetImage || '',
-      item.assetName || '',
-      item.assetGroup || '',
-      item.assetType || '',
-      item.provider || '',
-      item.currentUsr || '',
-      item.startDate ? item.startDate.substring(0, 10) : '',
-      item.endDate ? item.endDate.substring(0, 10) : '',
-      item.price != null ? item.price : '',
-      item.warrantyPeriod != null ? item.warrantyPeriod : '',
-      item.dateOfPurchase ? item.dateOfPurchase.substring(0, 10) : '',
-      item.assetStatusName || ''
+      item.serviceCode || '',
+      item.serviceImage || '',
+      item.serviceName || '',
+      item.serviceGroup || '',
+      item.serviceType || '',
+      item.serviceStatusName || ''
     ]
     
     const csvRow = row.map(cell => {
@@ -272,216 +245,51 @@ const handleExportExcel = () => {
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.setAttribute('href', url)
-  link.setAttribute('download', `danh_sach_tai_san_${new Date().getTime()}.csv`)
+  link.setAttribute('download', `danh_sach_dich_vu_${new Date().getTime()}.csv`)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
 };
 
 onMounted(() => {
-  fetchAssets()
+  fetchServices()
 })
 </script>
 
 <style scoped>
-/* Content Wrapper */
-.assets-content {
-  /* padding handled by Layout */
-}
-
-/* Card */
-.card {
-  background: #ffffff;
-  border-radius: 4px;
-  border: none;
-  box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03), 0 0.9375rem 1.40625rem rgba(4,9,20,0.03), 0 0.25rem 0.53125rem rgba(4,9,20,0.05), 0 0.125rem 0.1875rem rgba(4,9,20,0.03);
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding: 14px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  border-radius: 4px 4px 0 0;
-}
-
-.action-buttons .btn {
-  width: auto;
-  height: 30px;
-  padding: 0 12px;
-  font-size: 13px;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-/* Search */
-.card-search {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  background: #fff;
-  border-bottom: 1px solid #dee2e6;
-}
-.card-search .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 14px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.15s;
-  flex: 0 0 auto;
-}
+@import '../../../style.css';
+.services-content { }
+.card { background: #ffffff; border-radius: 4px; border: none; box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03), 0 0.9375rem 1.40625rem rgba(4,9,20,0.03), 0 0.25rem 0.53125rem rgba(4,9,20,0.05), 0 0.125rem 0.1875rem rgba(4,9,20,0.03); }
+.action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 14px 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; border-radius: 4px 4px 0 0; }
+.action-buttons .btn { width: auto; height: 30px; padding: 0 12px; font-size: 13px; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.card-search { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: #fff; border-bottom: 1px solid #dee2e6; }
+.card-search .btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; flex: 0 0 auto; }
 .card-search .btn:hover:not(:disabled) { opacity: 0.88; }
 .card-search .btn-primary { background: #3f6ad8; color: #fff; }
-
-.search-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.search-svg {
-  position: absolute;
-  left: 10px;
-  color: #adb5bd;
-  pointer-events: none;
-}
-.search-input {
-  padding: 7px 12px 7px 32px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 13px;
-  width: 220px;
-  color: #495057;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.search-input:focus {
-  border-color: #3f6ad8;
-  box-shadow: 0 0 0 0.2rem rgba(63, 106, 216, 0.25);
-}
-
-/* Card Body */
+.search-wrap { position: relative; display: flex; align-items: center; }
+.search-svg { position: absolute; left: 10px; color: #adb5bd; pointer-events: none; }
+.search-input { padding: 7px 12px 7px 32px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 13px; width: 220px; color: #495057; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.search-input:focus { border-color: #3f6ad8; box-shadow: 0 0 0 0.2rem rgba(63, 106, 216, 0.25); }
 .card-body { padding: 0; }
 .table-responsive { overflow-x: auto; }
-
-/* Table */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13.5px;
-}
-.table thead tr {
-  background: #f8f9fa;
-}
-.table th {
-  padding: 10px 16px;
-  text-align: left;
-  font-weight: 600;
-  color: #495057;
-  font-size: 12.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  border-bottom: 2px solid #dee2e6;
-  white-space: nowrap;
-}
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table thead tr { background: #f8f9fa; }
+.table th { padding: 10px 16px; text-align: left; font-weight: 600; color: #495057; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid #dee2e6; white-space: nowrap; }
 .th-check, .td-check { width: 44px; text-align: center !important; }
-.table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid #f1f3f5;
-  color: #495057;
-  vertical-align: middle;
-}
+.table td { padding: 11px 16px; border-bottom: 1px solid #f1f3f5; color: #495057; vertical-align: middle; }
 .table tbody tr { transition: background 0.1s; }
 .table tbody tr:hover { background: #f8f9fa; }
 .row-selected { background: #e8f0fe !important; }
 .text-muted { color: #adb5bd !important; }
 .fw-bold { font-weight: 600; }
-
-.truncate-desc {
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Badge */
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 500;
-}
-.badge-primary {
-  background: rgba(63, 106, 216, 0.12);
-  color: #3f6ad8;
-}
-.badge-warning {
-  background: rgba(247, 185, 36, 0.12);
-  color: #f7b924;
-}
-
-/* Empty */
-.empty-row {
-  text-align: center;
-  padding: 48px 20px !important;
-  color: #adb5bd;
-}
-
-/* Card Footer / Pagination */
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  border-top: 1px solid #dee2e6;
-  background: #f8f9fa;
-  border-radius: 0 0 4px 4px;
-}
+.truncate-desc { max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; }
+.empty-row { text-align: center; padding: 48px 20px !important; color: #adb5bd; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid #dee2e6; background: #f8f9fa; border-radius: 0 0 4px 4px; }
 .showing-text { font-size: 13px; color: #6c757d; }
 .pagination { display: flex; gap: 2px; }
-.page-link {
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: #fff;
-  color: #3f6ad8;
-  font-size: 13px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-}
-.page-link:hover:not(:disabled):not(.active) {
-  background: #e9ecef;
-}
-.page-link.active {
-  background: #3f6ad8;
-  color: #fff;
-  border-color: #3f6ad8;
-}
+.page-link { min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid #dee2e6; border-radius: 4px; background: #fff; color: #3f6ad8; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.page-link:hover:not(:disabled):not(.active) { background: #e9ecef; }
+.page-link.active { background: #3f6ad8; color: #fff; border-color: #3f6ad8; }
 .page-link:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Checkbox */
-input[type="checkbox"] {
-  accent-color: #3f6ad8;
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-}
+input[type="checkbox"] { accent-color: #3f6ad8; width: 15px; height: 15px; cursor: pointer; }
 </style>
