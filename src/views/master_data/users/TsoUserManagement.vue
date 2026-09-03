@@ -201,11 +201,6 @@ const canDeleteSelected = computed(() => {
   return !hasInvalid;
 })
 
-const getRoleName = (roleId: number) => {
-  const user = users.value.find(u => u.roleId === roleId)
-  return user ? user.roleName : roleId
-}
-
 const toggleAll = (e: Event) => {
   const checked = (e.target as HTMLInputElement).checked
   selectedIds.value = checked ? paginatedUsers.value.map(u => u.userId) : []
