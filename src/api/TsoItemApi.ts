@@ -2,7 +2,7 @@ import axios from 'axios';
 import { LocalStorageUtils } from '../utils/LocalStorageUtils';
 import router from '../router';
 
-const API_BASE = '/api/v1/services';
+const API_BASE = '/api/v1/items';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -30,30 +30,26 @@ apiClient.interceptors.response.use(
   }
 );
 
-export const TsoServiceManagementApi = {
-  getServicesPage(page: number, size: number, keyword?: string) {
+export const TsoItemApi = {
+  getItemsPage(page: number, size: number, keyword?: string) {
     return apiClient.get('/page', { params: { page, size, keyword } });
   },
-  getServiceById(id: number) {
+  getItemById(id: number) {
     return apiClient.get(`/${id}`);
   },
-  createService(data: any, file?: File) {
-    const formData = new FormData();
-    formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-    if (file) formData.append('file', file);
-    return apiClient.post('', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+  createItem(data: any) {
+    return apiClient.post('', data);
   },
-  updateService(id: number, data: any, file?: File) {
-    const formData = new FormData();
-    formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-    if (file) formData.append('file', file);
-    return apiClient.put(`/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+  updateItem(id: number, data: any) {
+    return apiClient.put(`/${id}`, data);
   },
-  deleteService(id: number) {
+  deleteItem(id: number) {
     return apiClient.delete(`/${id}`);
   },
+  getGroupsByItemCode(itemCode: string) {
+    return apiClient.get('/groups', { params: { itemCode } });
+  },
+  getSubItemsByGroupCode(groupItemCode: string) {
+    return apiClient.get('/sub-items', { params: { groupItemCode } });
+  }
 };

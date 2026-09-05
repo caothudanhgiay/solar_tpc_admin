@@ -61,6 +61,16 @@
             </span>
             <span class="nav-text">Người dùng</span>
           </li>
+          <li
+            class="nav-item"
+            :class="{ active: $route.path.startsWith('/items') }"
+            @click="router.push('/items')"
+          >
+            <span class="nav-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            </span>
+            <span class="nav-text">Danh mục chung</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -120,6 +130,7 @@
             <div class="page-title-icon">
               <svg v-if="route.path === '/dashboard'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3f6ad8" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
               <svg v-else-if="route.path.startsWith('/projects')" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f7b924" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2-2v16"></path></svg>
+              <svg v-else-if="route.path.startsWith('/items')" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d92550" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
               <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3ac47d" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             </div>
             <div>
@@ -164,6 +175,7 @@ const routeTitle = computed(() => {
   if (route.path.startsWith('/assets')) return 'Quản lí tài sản'
   if (route.path.startsWith('/services')) return 'Quản lý Dịch vụ'
   if (route.path.startsWith('/users')) return 'Quản lý Người dùng'
+  if (route.path.startsWith('/items')) return 'Danh mục chung'
   return ''
 })
 

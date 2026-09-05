@@ -6,6 +6,7 @@ import ProjectManagement from '../views/master_data/projects/TsoProjectManagemen
 import UserManagement from '../views/master_data/users/TsoUserManagement.vue'
 import AssetManagement from '../views/master_data/assets/TsoAssetManagement.vue'
 import ServiceManagement from '../views/master_data/services/TsoServiceManagement.vue'
+import ItemManagement from '../views/master_data/items/TsoItemManagement.vue'
 import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const routes: Array<RouteRecordRaw> = [
@@ -44,6 +45,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'services',
         name: 'TsoServiceManagement',
         component: ServiceManagement
+      },
+      {
+        path: 'items',
+        name: 'TsoItemManagement',
+        component: ItemManagement
       }
     ]
   },
@@ -63,23 +69,23 @@ const router = createRouter({
 })
 
 // Route protection guards
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to, _from) => {
   const isLoggedIn = !!LocalStorageUtils.getToken()
   
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isLoggedIn) {
-      next({ name: 'TsoLogin' })
+      return { name: 'TsoLogin' }
     } else {
-      next()
+      return true
     }
   } else if (to.matched.some(record => record.meta.requiresGuest)) {
     if (isLoggedIn) {
-      next({ name: 'TsoDashboard' })
+      return { name: 'TsoDashboard' }
     } else {
-      next()
+      return true
     }
   } else {
-    next()
+    return true
   }
 })
 

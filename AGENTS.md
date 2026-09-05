@@ -276,7 +276,7 @@ export const API_XXX = `${API_BASE}/xxx`
 2. Lưu token: `LocalStorageUtils.setToken(token)`
 3. Lưu user info: `LocalStorageUtils.setUser({ name, role, avatar })`
 4. Auto-attach: Interceptor tự gắn `Authorization: Bearer {token}`
-5. 401 handling: Interceptor tự redirect về `/login` + clear auth
+5. 401 handling: TẤT CẢ các custom Axios instance phải có Response Interceptor tự redirect về `TsoLogin` (hoặc `/login`) + `clearAuth()` khi nhận lỗi 401.
 6. Logout: `LocalStorageUtils.clearAuth()` + redirect
 
 ## 7. Build & Dev

@@ -32,11 +32,21 @@
             </div>
             <div class="form-group">
               <label class="form-label">{{ $t('service.group') }} <span class="required">*</span></label>
-              <input type="text" v-model="form.serviceGroup" required class="form-control" />
+              <select v-model="form.serviceGroup" required class="form-control" @change="onGroupChange">
+                <option value="" disabled>-- Chọn nhóm dịch vụ --</option>
+                <option v-for="group in serviceGroups" :key="group.groupItemCode" :value="group.groupItemCode">
+                  {{ group.groupItemName }}
+                </option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">{{ $t('service.type') }} <span class="required">*</span></label>
-              <input type="text" v-model="form.serviceType" required class="form-control" />
+              <select v-model="form.serviceType" required class="form-control" :disabled="!form.serviceGroup">
+                <option value="" disabled>-- Chọn loại dịch vụ --</option>
+                <option v-for="sub in serviceTypes" :key="sub.itemSubCode" :value="sub.itemSubCode">
+                  {{ sub.itemSubName }}
+                </option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">{{ $t('service.status') }}</label>
@@ -60,8 +70,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { TsoServiceManagementApi } from '../../../api/TsoServiceManagementApi'
+import { TsoItemApi } from '../../../api/TsoItemApi'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
+
+const ITEM_CODE_ADDV = "10001"
 
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
@@ -78,6 +91,9 @@ const loading = ref(false)
 const errorMsg = ref('')
 const selectedFile = ref<File | null>(null)
 
+const serviceGroups = ref<any[]>([])
+const serviceTypes = ref<any[]>([])
+
 const form = ref({
   serviceId: null as number | null,
   serviceCode: '',
@@ -89,15 +105,53 @@ const form = ref({
   serviceDescription: ''
 })
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchGroups()
+  
   if (props.initialData) {
     isEdit.value = !!props.initialData.serviceId
     form.value = {
       ...props.initialData
     }
     selectedFile.value = null
+    
+    // Load sub items if edit mode
+    if (form.value.serviceGroup) {
+      await fetchSubItems(form.value.serviceGroup)
+    }
   }
 })
+
+const fetchGroups = async () => {
+  try {
+    const res = await TsoItemApi.getGroupsByItemCode(ITEM_CODE_ADDV)
+    if (res.data.statusCode === 200 || res.data.code === 200) {
+      serviceGroups.value = res.data.data
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const fetchSubItems = async (groupCode: string) => {
+  try {
+    const res = await TsoItemApi.getSubItemsByGroupCode(groupCode)
+    if (res.data.statusCode === 200 || res.data.code === 200) {
+      serviceTypes.value = res.data.data
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const onGroupChange = () => {
+  form.value.serviceType = ''
+  if (form.value.serviceGroup) {
+    fetchSubItems(form.value.serviceGroup)
+  } else {
+    serviceTypes.value = []
+  }
+}
 
 const closeForm = () => {
   selectedFile.value = null

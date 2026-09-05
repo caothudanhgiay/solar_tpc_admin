@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
       const isLoginRequest = requestUrl.includes('/auth/login');
       if (status === 401 && !isLoginRequest) {
         LocalStorageUtils.clearAuth();
-        router.push({ name: 'Login' });
+        router.push({ name: 'TsoLogin' });
       }
 
       let defaultMsg = 'Lỗi không xác định';
