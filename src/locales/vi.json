@@ -36,6 +36,11 @@
     "user": "Người dùng (User)",
     "guest": "Khách (Guest)"
   },
+  "common": {
+    "unknownError": "Lỗi không xác định",
+    "badRequest": "Yêu cầu không hợp lệ",
+    "serverError": "Lỗi máy chủ nội bộ"
+  },
   "message": {
     "confirmDelete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
     "deleteError": "Lỗi khi xóa dữ liệu",

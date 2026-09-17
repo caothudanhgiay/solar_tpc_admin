@@ -36,6 +36,11 @@
     "user": "Normal User",
     "guest": "Guest"
   },
+  "common": {
+    "unknownError": "Unknown error",
+    "badRequest": "Invalid request",
+    "serverError": "Internal server error"
+  },
   "message": {
     "confirmDelete": "Are you sure you want to delete {count} selected records?",
     "deleteError": "Error deleting data",

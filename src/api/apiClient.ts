@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import router from '../router';
+import i18n from '../i18n';
 import { ApiException } from '../exception/exception';
 import { AppError } from '../exception/error';
 import { API_URL } from '../utils/constants';
@@ -14,12 +15,15 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request Interceptor: Tự động đính kèm Token
+// Request Interceptor: Tự động đính kèm Token + Accept-Language theo ngôn ngữ đang chọn trong app
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = LocalStorageUtils.getToken();
     if (token && config.headers) {
       config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    if (config.headers) {
+      config.headers['Accept-Language'] = i18n.global.locale.value;
     }
     return config;
   },
@@ -47,11 +51,11 @@ apiClient.interceptors.response.use(
         router.push({ name: 'TsoLogin' });
       }
 
-      let defaultMsg = 'Lỗi không xác định';
+      let defaultMsg = i18n.global.t('common.unknownError');
       if (status >= 400 && status < 500) {
-        defaultMsg = 'Yêu cầu không hợp lệ';
+        defaultMsg = i18n.global.t('common.badRequest');
       } else if (status >= 500) {
-        defaultMsg = 'Lỗi máy chủ nội bộ';
+        defaultMsg = i18n.global.t('common.serverError');
       }
 
       throw new ApiException(status, serverMessage || defaultMsg, data);
