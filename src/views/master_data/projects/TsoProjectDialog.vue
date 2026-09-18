@@ -17,7 +17,7 @@
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">{{ $t('project.code') }} <span class="required">*</span></label>
-              <input type="text" v-model="form.projectCode" required class="form-control" :placeholder="$t('project.codePlaceholder')" />
+              <input type="text" v-model="form.projectCode" required :disabled="isEdit" class="form-control" :placeholder="$t('project.codePlaceholder')" />
             </div>
             <div class="form-group">
               <label class="form-label">{{ $t('project.title') }} <span class="required">*</span></label>
@@ -426,6 +426,11 @@ const submitForm = async () => {
 .form-control:focus {
   border-color: #3f6ad8;
   box-shadow: 0 0 0 0.2rem rgba(63, 106, 216, 0.25);
+}
+.form-control:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
 }
 
 /* Details Section */

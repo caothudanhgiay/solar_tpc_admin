@@ -99,7 +99,7 @@
                 <td>{{ item.processStatusName }}</td>
               </tr>
               <tr v-if="projects.length === 0">
-                <td colspan="14" class="empty-row">{{ $t('message.no_data') }}</td>
+                <td colspan="15" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -133,6 +133,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import * as XLSX from 'xlsx'
 import { TsoProjectApi } from '../../../api/TsoProjectApi'
 import TsoProjectDialog from './TsoProjectDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
@@ -183,6 +184,7 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('project.confirmDelete', { count: selectedIds.value.length }))) {
+    const deletingAllOnPage = selectedIds.value.length === projects.value.length
     const results = await Promise.allSettled(selectedIds.value.map(id => TsoProjectApi.deleteProject(id)))
     const failedCount = results.filter(r => r.status === 'rejected').length
     if (failedCount > 0) {
@@ -190,6 +192,10 @@ const handleDelete = async () => {
       alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
     }
     selectedIds.value = []
+    // Nếu xóa hết toàn bộ bản ghi của trang hiện tại (không phải trang đầu) -> lùi về trang trước để tránh trang trắng
+    if (deletingAllOnPage && page.value > 0) {
+      page.value -= 1
+    }
     fetchProjects()
   }
 }
@@ -199,52 +205,33 @@ const handleExportExcel = () => {
     alert(t('project.noDataExport'))
     return
   }
-  
+
   const headers = [
-    'STT', 'ID', 'Mã DA', 'Tiêu Đề', 'Tên Dự Án', 'Mô Tả', 
-    'Địa Chỉ', 'Công Suất (kWp)', 'Tiết Kiệm (kWh)', 
-    'Bắt Đầu', 'Kết Thúc', 'Tiêu Biểu', 'Trạng Thái'
+    t('common.stt'), 'ID', t('project.code'), t('project.title'), t('project.name'), t('project.description'),
+    t('project.address'), t('project.solarPower'), t('project.savingPower'),
+    t('project.startDate'), t('project.endDate'), t('project.featured'), t('project.status')
   ]
-  
-  let csvContent = "\uFEFF" // BOM for UTF-8
-  csvContent += headers.map(h => `"${h}"`).join(',') + '\n'
-  
-  projects.value.forEach((item, index) => {
-    const isFeatured = item.isFeatured === 1 ? 'Có' : 'Không'
-    
-    const row = [
-      index + 1 + page.value * size.value,
-      item.projectId || '',
-      item.projectCode || '',
-      item.projectTitle || '',
-      item.projectName || '',
-      item.description || '',
-      item.projectAddress || '',
-      item.solarPower != null ? item.solarPower : '',
-      item.savingPower != null ? item.savingPower : '',
-      item.startDate || '',
-      item.endDate || '',
-      isFeatured,
-      item.processStatusName || '',
-    ]
-    
-    // Escape quotes and wrap in quotes for CSV safety
-    const csvRow = row.map(cell => {
-      const cellStr = String(cell).replace(/"/g, '""')
-      return `"${cellStr}"`
-    }).join(',')
-    
-    csvContent += csvRow + '\n'
-  })
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  link.setAttribute('download', `danh_sach_du_an_${new Date().getTime()}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+
+  const rows = projects.value.map((item, index) => [
+    index + 1 + page.value * size.value,
+    item.projectId || '',
+    item.projectCode || '',
+    item.projectTitle || '',
+    item.projectName || '',
+    item.description || '',
+    item.projectAddress || '',
+    item.solarPower != null ? item.solarPower : '',
+    item.savingPower != null ? item.savingPower : '',
+    item.startDate || '',
+    item.endDate || '',
+    item.isFeatured === 1 ? t('common.yes') : t('common.no'),
+    item.processStatusName || ''
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Projects')
+  XLSX.writeFile(workbook, `danh_sach_du_an_${new Date().getTime()}.xlsx`)
 }
 
 const form = ref<any>({})

@@ -96,7 +96,7 @@
                 <td>{{ item.assetStatusName }}</td>
               </tr>
               <tr v-if="assets.length === 0">
-                <td colspan="13" class="empty-row">{{ $t('message.no_data') }}</td>
+                <td colspan="15" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -130,6 +130,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import * as XLSX from 'xlsx'
 import { TsoAssetManagementApi } from '../../../api/TsoAssetManagementApi'
 import TsoAssetDialog from './TsoAssetDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
@@ -214,6 +215,7 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('assetPage.confirmDelete', { count: selectedIds.value.length }))) {
+    const deletingAllOnPage = selectedIds.value.length === assets.value.length
     const results = await Promise.allSettled(selectedIds.value.map(id => TsoAssetManagementApi.deleteAsset(id)))
     const failedCount = results.filter(r => r.status === 'rejected').length
     if (failedCount > 0) {
@@ -221,6 +223,10 @@ const handleDelete = async () => {
       alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
     }
     selectedIds.value = []
+    // Nếu xóa hết toàn bộ bản ghi của trang hiện tại (không phải trang đầu) -> lùi về trang trước để tránh trang trắng
+    if (deletingAllOnPage && page.value > 0) {
+      page.value -= 1
+    }
     fetchAssets()
   }
 }
@@ -236,47 +242,31 @@ const handleExportExcel = () => {
     return;
   }
   const headers = [
-    'STT', 'Mã Tài Sản', 'Ảnh Thiết Bị', 'Tên Tài Sản', 'Nhóm', 'Loại', 'Người Cấp', 'Người Dùng', 
-    'Ngày Bắt Đầu', 'Ngày Hết Hạn', 'Giá', 'Bảo Hành (Tháng)', 'Ngày Mua', 'Trạng Thái'
+    t('common.stt'), t('assetPage.code'), t('assetPage.image'), t('assetPage.name'), t('assetPage.group'), t('assetPage.type'), t('assetPage.provider'), t('assetPage.currentUser'),
+    t('assetPage.startDate'), t('assetPage.endDate'), t('assetPage.price'), t('assetPage.warrantyPeriod'), t('assetPage.dateOfPurchase'), t('assetPage.status')
   ]
-  
-  let csvContent = "\uFEFF" // BOM for UTF-8
-  csvContent += headers.map(h => `"${h}"`).join(',') + '\n'
-  
-  assets.value.forEach((item, index) => {
-    const row = [
-      index + 1 + page.value * size.value,
-      item.assetCode || '',
-      item.assetImage || '',
-      item.assetName || '',
-      item.assetGroup || '',
-      item.assetType || '',
-      item.provider || '',
-      item.currentUsr || '',
-      item.startDate ? item.startDate.substring(0, 10) : '',
-      item.endDate ? item.endDate.substring(0, 10) : '',
-      item.price != null ? item.price : '',
-      item.warrantyPeriod != null ? item.warrantyPeriod : '',
-      item.dateOfPurchase ? item.dateOfPurchase.substring(0, 10) : '',
-      item.assetStatusName || ''
-    ]
-    
-    const csvRow = row.map(cell => {
-      const cellStr = String(cell).replace(/"/g, '""')
-      return `"${cellStr}"`
-    }).join(',')
-    
-    csvContent += csvRow + '\n'
-  })
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  link.setAttribute('download', `danh_sach_tai_san_${new Date().getTime()}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+
+  const rows = assets.value.map((item, index) => [
+    index + 1 + page.value * size.value,
+    item.assetCode || '',
+    item.assetImage || '',
+    item.assetName || '',
+    item.assetGroup || '',
+    item.assetType || '',
+    item.provider || '',
+    item.currentUsr || '',
+    item.startDate ? item.startDate.substring(0, 10) : '',
+    item.endDate ? item.endDate.substring(0, 10) : '',
+    item.price != null ? item.price : '',
+    item.warrantyPeriod != null ? item.warrantyPeriod : '',
+    item.dateOfPurchase ? item.dateOfPurchase.substring(0, 10) : '',
+    item.assetStatusName || ''
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Assets')
+  XLSX.writeFile(workbook, `danh_sach_tai_san_${new Date().getTime()}.xlsx`)
 };
 
 onMounted(() => {

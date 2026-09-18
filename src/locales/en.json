@@ -70,7 +70,14 @@
     "stt": "No.",
     "showingPage": "Showing page {page}",
     "deleteFailedCount": "Failed to delete {failed}/{total} records. Please try again.",
-    "close": "Close"
+    "close": "Close",
+    "forbidden": "You do not have permission to perform this action.",
+    "serverErrorWithCode": "Server error ({code}): {message}",
+    "errorWithCode": "Error {code}: {message}",
+    "connectionError": "Unable to connect to the server. Please check the server.",
+    "systemError": "A system error occurred.",
+    "yes": "Yes",
+    "no": "No"
   },
   "message": {
     "confirmDelete": "Are you sure you want to delete {count} selected records?",

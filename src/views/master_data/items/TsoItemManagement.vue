@@ -196,6 +196,7 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('item.confirmDelete', { count: selectedIds.value.length }))) {
+    const deletingAllOnPage = selectedIds.value.length === items.value.length
     const results = await Promise.allSettled(selectedIds.value.map(id => TsoItemApi.deleteItem(id)))
     const failedCount = results.filter(r => r.status === 'rejected').length
     if (failedCount > 0) {
@@ -203,6 +204,10 @@ const handleDelete = async () => {
       alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
     }
     selectedIds.value = []
+    // Nếu xóa hết toàn bộ bản ghi của trang hiện tại (không phải trang đầu) -> lùi về trang trước để tránh trang trắng
+    if (deletingAllOnPage && page.value > 0) {
+      page.value -= 1
+    }
     fetchItems()
   }
 }

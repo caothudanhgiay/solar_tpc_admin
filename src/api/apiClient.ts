@@ -60,7 +60,7 @@ apiClient.interceptors.response.use(
 
       throw new ApiException(status, serverMessage || defaultMsg, data);
     } else {
-      throw new AppError(error.message || 'Lỗi kết nối máy chủ');
+      throw new AppError(error.message || i18n.global.t('common.connectionError'));
     }
   }
 );

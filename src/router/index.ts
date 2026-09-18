@@ -14,6 +14,10 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
     children: [
       {
+        path: '',
+        redirect: { name: 'TsoDashboard' }
+      },
+      {
         path: 'dashboard',
         name: 'TsoDashboard',
         component: () => import('../views/TsoDashboard.vue')
@@ -44,10 +48,6 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/master_data/items/TsoItemManagement.vue')
       }
     ]
-  },
-  {
-    path: '/',
-    redirect: '/dashboard'
   },
   {
     path: '/:pathMatch(.*)*',

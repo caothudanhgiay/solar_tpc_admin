@@ -50,7 +50,7 @@
                 <th class="th-check">
                   <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
                 </th>
-                <th style="width: 50px; text-align: center;">STT</th>
+                <th style="width: 50px; text-align: center;">{{ $t('common.stt') }}</th>
                 <th>{{ $t('service.code') }}</th>
                 <th>{{ $t('service.image') }}</th>
                 <th>{{ $t('service.name') }}</th>
@@ -88,7 +88,7 @@
 
       <div class="card-footer" v-if="services.length > 0">
         <span class="showing-text">
-          Hiển thị trang {{ page + 1 }}
+          {{ $t('common.showingPage', { page: page + 1 }) }}
         </span>
         <div class="pagination">
           <button class="page-link" :disabled="page === 0" @click="changePage(page - 1)">‹</button>
@@ -111,6 +111,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import * as XLSX from 'xlsx'
 import { TsoServiceManagementApi } from '../../../api/TsoServiceManagementApi'
 import TsoServiceDialog from './TsoServiceDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
@@ -195,6 +196,7 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('service.confirmDelete', { count: selectedIds.value.length }))) {
+    const deletingAllOnPage = selectedIds.value.length === services.value.length
     const results = await Promise.allSettled(selectedIds.value.map(id => TsoServiceManagementApi.deleteService(id)))
     const failedCount = results.filter(r => r.status === 'rejected').length
     if (failedCount > 0) {
@@ -202,6 +204,10 @@ const handleDelete = async () => {
       alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
     }
     selectedIds.value = []
+    // Nếu xóa hết toàn bộ bản ghi của trang hiện tại (không phải trang đầu) -> lùi về trang trước để tránh trang trắng
+    if (deletingAllOnPage && page.value > 0) {
+      page.value -= 1
+    }
     fetchServices()
   }
 }
@@ -217,39 +223,23 @@ const handleExportExcel = () => {
     return;
   }
   const headers = [
-    'STT', t('service.code'), t('service.image'), t('service.name'), t('service.group'), t('service.type'), t('service.status')
+    t('common.stt'), t('service.code'), t('service.image'), t('service.name'), t('service.group'), t('service.type'), t('service.status')
   ]
-  
-  let csvContent = "\uFEFF" // BOM for UTF-8
-  csvContent += headers.map(h => `"${h}"`).join(',') + '\n'
-  
-  services.value.forEach((item, index) => {
-    const row = [
-      index + 1 + page.value * size.value,
-      item.serviceCode || '',
-      item.serviceImage || '',
-      item.serviceName || '',
-      item.serviceGroup || '',
-      item.serviceType || '',
-      item.serviceStatusName || ''
-    ]
-    
-    const csvRow = row.map(cell => {
-      const cellStr = String(cell).replace(/"/g, '""')
-      return `"${cellStr}"`
-    }).join(',')
-    
-    csvContent += csvRow + '\n'
-  })
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  link.setAttribute('download', `danh_sach_dich_vu_${new Date().getTime()}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+
+  const rows = services.value.map((item, index) => [
+    index + 1 + page.value * size.value,
+    item.serviceCode || '',
+    item.serviceImage || '',
+    item.serviceName || '',
+    item.serviceGroup || '',
+    item.serviceType || '',
+    item.serviceStatusName || ''
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Services')
+  XLSX.writeFile(workbook, `danh_sach_dich_vu_${new Date().getTime()}.xlsx`)
 };
 
 onMounted(() => {

@@ -167,6 +167,20 @@ const emit = defineEmits<{
 - Scoped styles: luôn dùng `<style scoped>`
 - Slots: dùng `<slot>` cho content composition
 
+### 3.2b. So sánh giá trị Enum/Role (số)
+
+Các giá trị nghiệp vụ dạng số (roleId, statusId... — vd `TsoRoleEnumOptions`) có thể bị lưu/trả về không đồng nhất kiểu dữ liệu giữa API response, LocalStorage và code (string vs number). **LUÔN ép kiểu `Number(...)` trước khi so sánh `===`** với các giá trị này, đặc biệt là giá trị đọc từ `LocalStorageUtils.getUser()`/`getItem()`:
+
+```typescript
+// ❌ SAI — role đọc từ LocalStorage có thể là number nhưng so sánh với string
+const role = currentUser.value?.role;
+if (role === '1') { ... }
+
+// ✅ ĐÚNG
+const role = Number(currentUser.value?.role);
+if (role === 1) { ... }
+```
+
 ### 3.3. Router Configuration
 ```typescript
 // router/index.ts
@@ -203,6 +217,7 @@ router.beforeEach((to, _from, next) => {
 - Lazy loading: dùng `() => import(...)` cho views lớn
 - Auth guard: kiểm tra token qua `LocalStorageUtils.getToken()`
 - Meta fields: `requiresAuth: true` cho trang cần login, `requiresGuest: true` cho trang chỉ guest
+- **KHÔNG khai báo 2 route với `path` trùng nhau** (kể cả `path: '/'`) — route đăng ký trước sẽ luôn thắng khi match, route trùng phía sau thành dead code không bao giờ chạy tới. Nếu route cha có `children` và cần redirect ở đúng path gốc (vd `/` → `/dashboard`), khai báo child với `path: ''` và `redirect` bên trong `children`, KHÔNG tạo thêm route riêng cùng path ở ngoài.
 
 ### 3.4. API Client
 ```typescript
@@ -267,6 +282,8 @@ try {
 }
 ```
 
+**Quy tắc riêng cho các class tiện ích thuần TS (`src/exception/*.ts`, `src/utils/*.ts`...):** các file này KHÔNG phải Vue component nên không dùng được `useI18n()`, nhưng vẫn PHẢI qua i18n khi hiển thị text cho người dùng (vd `alert()` trong `ApiException.handle()`/`AppError.handle()`). Import trực tiếp instance global: `import i18n from '../i18n'` rồi gọi `i18n.global.t('key')` — giống cách `apiClient.ts` đang làm ở response interceptor. KHÔNG viết chuỗi tiếng Việt/Anh cố định trong các file này.
+
 ### 3.6. Constants
 ```typescript
 // utils/constants.ts
@@ -301,6 +318,8 @@ export function useXxx() {
 ### 3.8. Excel Export & Rich Text Editor
 
 - **Xuất Excel**: dùng thư viện `xlsx` đã có sẵn trong `package.json`. Nút "Xuất Excel" ở mỗi màn Master Data (theo Quy chuẩn Layout Master Data ở cuối file) gọi hàm export dựng `Workbook`/`Worksheet` từ data đang hiển thị trên bảng — đặt logic export trong chính view `Tso[Module]Management.vue`, KHÔNG cần tạo file riêng trừ khi logic dùng lại ở nhiều module.
+  - **TUYỆT ĐỐI KHÔNG** tự dựng chuỗi CSV (`"﻿" + ...join(',')`) rồi tải xuống file `.csv` và gắn nhãn "Xuất Excel" — đây không phải Excel thật và không tuân thủ rule trên. PHẢI dùng đúng API của `xlsx`: `XLSX.utils.aoa_to_sheet(...)` (hoặc `json_to_sheet`) → `XLSX.utils.book_new()` → `XLSX.utils.book_append_sheet(wb, ws, sheetName)` → `XLSX.writeFile(wb, 'ten_file.xlsx')`.
+  - Header cột trong file xuất cũng phải qua `t()`/`$t()` như header bảng, không hardcode text.
 - **Rich text editor**: dùng `@vueup/vue-quill` (component `QuillEditor`) cho các field mô tả dài cần định dạng (vd mô tả dự án). Nội dung lưu dưới dạng HTML string, submit cùng payload `FormData` như các field khác — Backend nhận HTML này qua field kiểu `TEXT`/`LONGTEXT`, KHÔNG tự ý sanitize/strip HTML ở frontend trừ khi được yêu cầu.
 
 ## 4. Quy tắc Styling (Design System)
@@ -325,8 +344,8 @@ export function useXxx() {
 ## 6. Authentication Flow
 
 1. Login: `POST /api/auth/login` → nhận `{ token, username, role }`
-2. Lưu token: `LocalStorageUtils.setToken(token)`
-3. Lưu user info: `LocalStorageUtils.setUser({ name, role, avatar })`
+2. Lưu token: `LocalStorageUtils.setToken(token, rememberMe)` — tham số `rememberMe` (từ checkbox "Ghi nhớ đăng nhập") PHẢI được truyền thật, KHÔNG bỏ qua. `true`/mặc định → lưu ở `localStorage` (giữ đăng nhập qua các lần mở trình duyệt); `false` → lưu ở `sessionStorage` (mất khi đóng tab/trình duyệt). Checkbox kiểu "remember me" mà chỉ cập nhật state cục bộ, không ảnh hưởng tới nơi lưu token, bị coi là tính năng chưa hoàn thành.
+3. Lưu user info: `LocalStorageUtils.setUser({ name, role, avatar })` (gọi SAU `setToken` vì `setToken` quyết định storage đang active)
 4. Auto-attach: Interceptor tự gắn `Authorization: Bearer {token}`
 5. 401 handling: TẤT CẢ các custom Axios instance phải có Response Interceptor tự redirect về `TsoLogin` (hoặc `/login`) + `clearAuth()` khi nhận lỗi 401.
 6. Logout: `LocalStorageUtils.clearAuth()` + redirect
@@ -397,3 +416,5 @@ alert(t('common.saveSuccess'))
 - **Chuẩn mẫu (Template)**: Đối với bất kỳ tính năng quản lý Master Data (danh mục) nào được tạo mới, LUÔN LUÔN sao chép và dựa trên kiến trúc layout chuẩn của màn hình quản lý Dự án (`TsoProjectManagement.vue` và `TsoProjectDialog.vue`).
 - **Màn hình Danh sách (List)**: Phải bao gồm Dãy button hành động (Thêm, Sửa, Copy, Xóa, Xuất Excel), Ô tìm kiếm, Bảng dữ liệu có Checkbox, và Phân trang (Pagination).
 - **Màn hình Dialog**: Thiết kế chuẩn CSS như `.modal-backdrop`, `.modal-dialog`, `.form-grid`, có Header rõ ràng và Footer với các button kích thước chuẩn (`btn-dialog`).
+- **`colspan` của dòng "Không có dữ liệu"**: PHẢI đếm đúng và bằng tổng số cột `<th>` trong `<thead>` (tính cả cột checkbox đầu bảng). Mỗi khi thêm/bớt cột trong bảng, phải rà lại và cập nhật `colspan` tương ứng — sai lệch khiến dòng "Không có dữ liệu" không căn giữa hết chiều rộng bảng.
+- **Reset trang sau khi xóa (bulk delete)**: Sau khi `handleDelete` xóa xong, nếu số bản ghi vừa xóa bằng đúng số bản ghi đang hiển thị ở trang hiện tại (`selectedIds.length === danhSach.value.length`) VÀ `page > 0`, PHẢI giảm `page` đi 1 trước khi gọi lại API fetch trang — tránh trường hợp xóa hết trang cuối rồi hiển thị "Không có dữ liệu" dù các trang trước vẫn còn bản ghi.

@@ -96,7 +96,7 @@
       <!-- Card Footer: Pagination -->
       <div class="card-footer" v-if="users.length > 0">
         <span class="showing-text">
-          Hiển thị trang {{ page + 1 }}
+          {{ $t('common.showingPage', { page: page + 1 }) }}
         </span>
         <div class="pagination">
           <button class="page-link" :disabled="page === 0" @click="changePage(page - 1)">‹</button>
@@ -121,6 +121,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import * as XLSX from 'xlsx'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import TsoUserDialog from './TsoUserDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
@@ -148,16 +149,19 @@ const isAllSelected = computed(() => users.value.length > 0 && selectedIds.value
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
 
 const currentUser = computed(() => LocalStorageUtils.getUser())
+// role được backend trả về dạng số (khớp TsoRoleEnumOptions/roleId) -> luôn ép kiểu Number trước khi so sánh,
+// tránh lệch kiểu string/number khiến so sánh === không bao giờ đúng.
+const currentUserRole = computed(() => Number(currentUser.value?.role))
+
 const canAddUser = computed(() => {
-  const role = currentUser.value?.role;
-  return role === '1' || role === '2'; // Root and Admin can add
+  return currentUserRole.value === 1 || currentUserRole.value === 2; // Root and Admin can add
 })
 
 const canEditSelected = computed(() => {
   if (!isSingleSelected.value) return false;
-  const role = currentUser.value?.role;
-  if (role === '1') return true; // Root can edit anyone
-  if (role === '3') return false; // User cannot edit anyone
+  const role = currentUserRole.value;
+  if (role === 1) return true; // Root can edit anyone
+  if (role === 3) return false; // User cannot edit anyone
   // Admin logic
   const selectedUser = users.value.find(u => u.userId === selectedIds.value[0]);
   if (!selectedUser) return false;
@@ -169,10 +173,10 @@ const canEditSelected = computed(() => {
 
 const canDeleteSelected = computed(() => {
   if (selectedIds.value.length === 0) return false;
-  const role = currentUser.value?.role;
-  if (role === '1') return true;
-  if (role === '3') return false;
-  
+  const role = currentUserRole.value;
+  if (role === 1) return true;
+  if (role === 3) return false;
+
   // Admin logic: check if any selected user is Root or another Admin
   const hasInvalid = selectedIds.value.some(id => {
     const user = users.value.find(u => u.userId === id);
@@ -216,6 +220,7 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('message.confirmDelete', { count: selectedIds.value.length }))) {
+    const deletingAllOnPage = selectedIds.value.length === users.value.length
     const results = await Promise.allSettled(selectedIds.value.map(id => TsoUserApi.deleteUser(id)))
     const failedCount = results.filter(r => r.status === 'rejected').length
     if (failedCount > 0) {
@@ -223,6 +228,10 @@ const handleDelete = async () => {
       alert(`${t('message.deleteError')} (${failedCount}/${selectedIds.value.length})`)
     }
     selectedIds.value = []
+    // Nếu xóa hết toàn bộ bản ghi của trang hiện tại (không phải trang đầu) -> lùi về trang trước để tránh trang trắng
+    if (deletingAllOnPage && page.value > 0) {
+      page.value -= 1
+    }
     fetchUsers()
   }
 }
@@ -260,31 +269,20 @@ const copyUser = (user: any) => {
 
 const exportExcel = () => {
   if (users.value.length === 0) return
-  
-  const headers = ['ID', 'Tài khoản', 'Email', 'Quyền hạn', 'Access ID']
-  const bom = "\uFEFF";
-  
-  const rows = users.value.map(u => {
-    return [
-      u.userId,
-      `"${(u.username || '').replace(/"/g, '""')}"`,
-      `"${(u.email || '').replace(/"/g, '""')}"`,
-      `"${u.roleName}"`,
-      `"${u.accessName}"`
-    ].join(",")
-  });
 
-  const csvContent = bom + headers.join(",") + "\n" + rows.join("\n");
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a")
-  link.setAttribute("href", url)
-  link.setAttribute("download", "danh_sach_nguoi_dung.csv")
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+  const headers = ['ID', t('user.username'), t('user.email'), t('user.role'), t('user.accessId')]
+  const rows = users.value.map(u => [
+    u.userId,
+    u.username || '',
+    u.email || '',
+    u.roleName || '',
+    u.accessName || ''
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Users')
+  XLSX.writeFile(workbook, `danh_sach_nguoi_dung_${new Date().getTime()}.xlsx`)
 }
 
 onMounted(fetchUsers)

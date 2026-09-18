@@ -70,7 +70,14 @@
     "stt": "STT",
     "showingPage": "Hiển thị trang {page}",
     "deleteFailedCount": "Xóa thất bại {failed}/{total} bản ghi. Vui lòng thử lại.",
-    "close": "Đóng"
+    "close": "Đóng",
+    "forbidden": "Bạn không có quyền thực hiện thao tác này.",
+    "serverErrorWithCode": "Lỗi máy chủ ({code}): {message}",
+    "errorWithCode": "Lỗi {code}: {message}",
+    "connectionError": "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại server.",
+    "systemError": "Đã xảy ra lỗi hệ thống.",
+    "yes": "Có",
+    "no": "Không"
   },
   "message": {
     "confirmDelete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",

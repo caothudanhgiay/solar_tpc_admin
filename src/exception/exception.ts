@@ -1,3 +1,5 @@
+import i18n from '../i18n';
+
 export class ApiException extends Error {
   public statusCode: number;
   public data: any;
@@ -15,18 +17,19 @@ export class ApiException extends Error {
 
   public static handle(error: ApiException) {
     if (typeof window !== 'undefined') {
+      const { t } = i18n.global;
       if (error.statusCode === 401) {
         // Thường lỗi 401 đã được xử lý (redirect) ở axios interceptor
         return;
       }
       if (error.statusCode === 403) {
-        alert("Bạn không có quyền thực hiện thao tác này (Forbidden).");
+        alert(t('common.forbidden'));
         return;
       }
       if (error.statusCode >= 500) {
-        alert(`Lỗi máy chủ (${error.statusCode}): ${error.message}`);
+        alert(t('common.serverErrorWithCode', { code: error.statusCode, message: error.message }));
       } else {
-        alert(`Lỗi ${error.statusCode}: ${error.message}`);
+        alert(t('common.errorWithCode', { code: error.statusCode, message: error.message }));
       }
     }
   }

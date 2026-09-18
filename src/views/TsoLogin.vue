@@ -100,7 +100,7 @@ const handleLogin = async () => {
     const response = await apiPost(API_AUTH_LOGIN, dataJson);
     if (response && response.statusCode === 200) {
       const data = response.data
-      LocalStorageUtils.setToken(data.token)
+      LocalStorageUtils.setToken(data.token, rememberMe.value)
       LocalStorageUtils.setUser({
         userId: data.userId,
         name: data.username,
