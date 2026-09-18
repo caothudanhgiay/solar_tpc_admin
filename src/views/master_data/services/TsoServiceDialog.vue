@@ -33,7 +33,7 @@
             <div class="form-group">
               <label class="form-label">{{ $t('service.group') }} <span class="required">*</span></label>
               <select v-model="form.serviceGroup" required class="form-control" @change="onGroupChange">
-                <option value="" disabled>-- Chọn nhóm dịch vụ --</option>
+                <option value="" disabled>{{ $t('service.selectGroupPlaceholder') }}</option>
                 <option v-for="group in serviceGroups" :key="group.groupItemCode" :value="group.groupItemCode">
                   {{ group.groupItemName }}
                 </option>
@@ -42,7 +42,7 @@
             <div class="form-group">
               <label class="form-label">{{ $t('service.type') }} <span class="required">*</span></label>
               <select v-model="form.serviceType" required class="form-control" :disabled="!form.serviceGroup">
-                <option value="" disabled>-- Chọn loại dịch vụ --</option>
+                <option value="" disabled>{{ $t('service.selectTypePlaceholder') }}</option>
                 <option v-for="sub in serviceTypes" :key="sub.itemSubCode" :value="sub.itemSubCode">
                   {{ sub.itemSubName }}
                 </option>
@@ -69,11 +69,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoServiceManagementApi } from '../../../api/TsoServiceManagementApi'
 import { TsoItemApi } from '../../../api/TsoItemApi'
+import { ApiException } from '../../../exception/exception'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
 
+const { t } = useI18n()
 const ITEM_CODE_ADDV = "10001"
 
 const dialogRef = ref<HTMLElement | null>(null)
@@ -124,9 +127,9 @@ onMounted(async () => {
 
 const fetchGroups = async () => {
   try {
-    const res = await TsoItemApi.getGroupsByItemCode(ITEM_CODE_ADDV)
-    if (res.data.statusCode === 200 || res.data.code === 200) {
-      serviceGroups.value = res.data.data
+    const res: any = await TsoItemApi.getGroupsByItemCode(ITEM_CODE_ADDV)
+    if (res.statusCode === 200) {
+      serviceGroups.value = res.data
     }
   } catch (e) {
     console.error(e)
@@ -135,9 +138,9 @@ const fetchGroups = async () => {
 
 const fetchSubItems = async (groupCode: string) => {
   try {
-    const res = await TsoItemApi.getSubItemsByGroupCode(groupCode)
-    if (res.data.statusCode === 200 || res.data.code === 200) {
-      serviceTypes.value = res.data.data
+    const res: any = await TsoItemApi.getSubItemsByGroupCode(groupCode)
+    if (res.statusCode === 200) {
+      serviceTypes.value = res.data
     }
   } catch (e) {
     console.error(e)
@@ -179,8 +182,8 @@ const submitForm = async () => {
       await TsoServiceManagementApi.createService(payload, selectedFile.value || undefined)
     }
     emit('saved')
-  } catch (e: any) {
-    errorMsg.value = e.response?.data?.message || 'Error'
+  } catch (e) {
+    errorMsg.value = e instanceof ApiException ? e.message : t('service.saveError')
   } finally {
     loading.value = false
   }

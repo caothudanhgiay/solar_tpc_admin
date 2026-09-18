@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import router from '../router';
 import i18n from '../i18n';
 import { ApiException } from '../exception/exception';
@@ -70,12 +70,12 @@ export const apiGet = <T = any>(url: string, params?: any): Promise<T> => {
   return apiClient.get(url, { params });
 };
 
-export const apiPost = <T = any>(url: string, data?: any): Promise<T> => {
-  return apiClient.post(url, data);
+export const apiPost = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  return apiClient.post(url, data, config);
 };
 
-export const apiPut = <T = any>(url: string, data?: any): Promise<T> => {
-  return apiClient.put(url, data);
+export const apiPut = <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  return apiClient.put(url, data, config);
 };
 
 export const apiDelete = <T = any>(url: string, params?: any): Promise<T> => {

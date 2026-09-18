@@ -3,7 +3,7 @@
     <div class="modal-dialog" ref="dialogRef">
       <!-- Header -->
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEdit ? 'Cập nhật Người dùng' : 'Thêm mới Người dùng' }}</h5>
+        <h5 class="modal-title">{{ isEdit ? $t('user.editTitle') : $t('user.addTitle') }}</h5>
         <button class="modal-close" @click="closeForm">&times;</button>
       </div>
 
@@ -15,32 +15,32 @@
 
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label class="form-label">Tên đăng nhập <span class="required">*</span></label>
+            <label class="form-label">{{ $t('user.username') }} <span class="required">*</span></label>
             <input type="text" v-model="form.username" required class="form-control" />
           </div>
           <div class="form-group">
-            <label class="form-label">Email <span class="required">*</span></label>
+            <label class="form-label">{{ $t('user.email') }} <span class="required">*</span></label>
             <input type="email" v-model="form.email" required class="form-control" />
           </div>
           <div class="form-group" v-if="!isEdit">
-            <label class="form-label">Mật khẩu <span class="required">*</span></label>
+            <label class="form-label">{{ $t('user.password') }} <span class="required">*</span></label>
             <input type="password" v-model="form.password" required class="form-control" />
           </div>
           <div class="form-group">
-            <label class="form-label">Quyền hạn (Role) <span class="required">*</span></label>
+            <label class="form-label">{{ $t('user.roleLabel') }} <span class="required">*</span></label>
             <TsoSelectOption v-model="form.roleId" :options="roles" />
           </div>
           <div class="form-group">
-            <label class="form-label">Access ID <span class="required">*</span></label>
+            <label class="form-label">{{ $t('user.accessId') }} <span class="required">*</span></label>
             <TsoSelectOption v-model="form.accessId" :options="accesses" />
           </div>
 
           <!-- Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">Hủy</button>
+            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">{{ $t('button.cancel') }}</button>
             <button type="submit" class="btn btn-primary btn-dialog" :disabled="loading">
               <span v-if="loading" class="spinner"></span>
-              <span v-else>Lưu thông tin</span>
+              <span v-else>{{ $t('button.save') }}</span>
             </button>
           </div>
         </form>
@@ -51,10 +51,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
+const { t } = useI18n()
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
 
@@ -122,7 +124,7 @@ const submitForm = async () => {
         }
       }
     } else {
-      errorMsg.value = error.message || 'Có lỗi xảy ra khi lưu dữ liệu.'
+      errorMsg.value = error.message || t('user.saveError')
     }
   } finally {
     loading.value = false

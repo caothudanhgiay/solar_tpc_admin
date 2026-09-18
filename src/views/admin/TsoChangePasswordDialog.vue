@@ -3,7 +3,7 @@
     <div class="modal-dialog" ref="dialogRef">
       <!-- Header -->
       <div class="modal-header">
-        <h5 class="modal-title">Đổi mật khẩu</h5>
+        <h5 class="modal-title">{{ $t('layout.changePassword') }}</h5>
         <button class="modal-close" @click="closeForm">&times;</button>
       </div>
 
@@ -18,24 +18,24 @@
 
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label class="form-label">Nhập lại mật khẩu (Mật khẩu cũ) <span class="required">*</span></label>
+            <label class="form-label">{{ $t('changePassword.oldPassword') }} <span class="required">*</span></label>
             <input type="password" v-model="form.oldPassword" required class="form-control" />
           </div>
           <div class="form-group">
-            <label class="form-label">Mật khẩu mới <span class="required">*</span></label>
+            <label class="form-label">{{ $t('changePassword.newPassword') }} <span class="required">*</span></label>
             <input type="password" v-model="form.newPassword" required class="form-control" />
           </div>
           <div class="form-group">
-            <label class="form-label">Xác nhận mật khẩu mới <span class="required">*</span></label>
+            <label class="form-label">{{ $t('changePassword.confirmPassword') }} <span class="required">*</span></label>
             <input type="password" v-model="form.confirmPassword" required class="form-control" />
           </div>
 
           <!-- Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeForm">Hủy</button>
+            <button type="button" class="btn btn-secondary" @click="closeForm">{{ $t('button.cancel') }}</button>
             <button type="submit" class="btn btn-primary" :disabled="loading">
               <span v-if="loading" class="spinner"></span>
-              <span v-else>Đổi mật khẩu</span>
+              <span v-else>{{ $t('layout.changePassword') }}</span>
             </button>
           </div>
         </form>
@@ -46,8 +46,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../api/TsoUserApi'
+import { ApiException } from '../../exception/exception'
 import { useFocusTrap } from '../../composables/useFocusTrap'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   userId: number
@@ -77,34 +81,30 @@ const submitForm = async () => {
   successMsg.value = ''
   
   if (form.value.newPassword !== form.value.confirmPassword) {
-    errorMsg.value = 'Mật khẩu xác nhận không khớp.'
+    errorMsg.value = t('changePassword.mismatchError')
     return
   }
 
   loading.value = true
   try {
-    const res = await TsoUserApi.changePassword(props.userId, {
+    const res: any = await TsoUserApi.changePassword(props.userId, {
       oldPassword: form.value.oldPassword,
       newPassword: form.value.newPassword,
       confirmPassword: form.value.confirmPassword
     })
-    
-    // Check if the backend returned success
-    if (res && res.data && (res.data.statusCode === 200 || res.data.statusCode === 201)) {
-        successMsg.value = 'Đổi mật khẩu thành công!'
+
+    // apiPut đã unwrap response.data ở interceptor -> res chính là {statusCode, message, data}
+    if (res && (res.statusCode === 200 || res.statusCode === 201)) {
+        successMsg.value = t('changePassword.success')
         setTimeout(() => {
           emit('saved')
         }, 1500)
     } else {
-        errorMsg.value = res?.data?.message || 'Lỗi khi đổi mật khẩu'
+        errorMsg.value = res?.message || t('changePassword.error')
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Save failed', error)
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMsg.value = error.response.data.message
-    } else {
-      errorMsg.value = 'Có lỗi xảy ra khi lưu dữ liệu.'
-    }
+    errorMsg.value = error instanceof ApiException ? error.message : t('user.saveError')
   } finally {
     loading.value = false
   }

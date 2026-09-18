@@ -5,8 +5,8 @@
         <!-- Form Area -->
         <div class="form-area">
           <img src="/icon.png" alt="Solar TPC" class="login-brand-logo" />
-          <h3 class="form-title">Welcome back,</h3>
-          <p class="form-subtitle">Please sign in to your account below.</p>
+          <h3 class="form-title">{{ $t('loginPage.welcomeBack') }}</h3>
+          <p class="form-subtitle">{{ $t('loginPage.signInSubtitle') }}</p>
 
           <!-- Error Alert -->
           <div v-if="errorMsg" class="alert-danger">
@@ -42,22 +42,22 @@
             </div>
 
             <div class="form-actions mt-4">
-              <a href="#" class="forgot-link">Recover Password</a>
+              <a href="#" class="forgot-link">{{ $t('loginPage.recoverPassword') }}</a>
               <button type="submit" class="btn btn-primary" :disabled="loading">
                 <span v-if="loading" class="spinner"></span>
-                <span v-else>Login to Dashboard</span>
+                <span v-else>{{ $t('loginPage.loginButton') }}</span>
               </button>
             </div>
           </form>
         </div>
-        
+
         <!-- Footer -->
         <div class="card-footer">
-          No account? <a href="#" class="signup-link">Sign up now</a>
+          {{ $t('loginPage.noAccount') }} <a href="#" class="signup-link">{{ $t('loginPage.signUpNow') }}</a>
         </div>
       </div>
       <div class="login-footer-text">
-        Copyright © Solar TPC 2026
+        {{ $t('loginPage.copyright', { year: copyrightYear }) }}
       </div>
     </div>
   </div>
@@ -80,6 +80,7 @@ const password = ref('')
 const rememberMe = ref(false)
 const errorMsg = ref('')
 const loading = ref(false)
+const copyrightYear = new Date().getFullYear()
 
 const handleLogin = async () => {
   if (!username.value.trim() || !password.value) {

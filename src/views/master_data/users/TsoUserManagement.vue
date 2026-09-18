@@ -64,15 +64,15 @@
                   <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
                 </th>
                 <th>ID</th>
-                <th>Tài khoản</th>
-                <th>Email</th>
-                <th>Quyền hạn</th>
-                <th>Access ID</th>
+                <th>{{ $t('user.username') }}</th>
+                <th>{{ $t('user.email') }}</th>
+                <th>{{ $t('user.role') }}</th>
+                <th>{{ $t('user.accessId') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="user in paginatedUsers"
+                v-for="user in users"
                 :key="user.userId"
                 :class="{ 'row-selected': selectedIds.includes(user.userId) }"
               >
@@ -85,8 +85,8 @@
                 <td>{{ user.roleName }}</td>
                 <td>{{ user.accessName }}</td>
               </tr>
-              <tr v-if="paginatedUsers.length === 0">
-                <td colspan="6" class="empty-row">Không có dữ liệu</td>
+              <tr v-if="users.length === 0">
+                <td colspan="6" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -94,20 +94,14 @@
       </div>
 
       <!-- Card Footer: Pagination -->
-      <div class="card-footer" v-if="filteredUsers.length > 0">
+      <div class="card-footer" v-if="users.length > 0">
         <span class="showing-text">
-          Hiển thị {{ startIndex + 1 }}–{{ Math.min(endIndex, filteredUsers.length) }} / {{ filteredUsers.length }}
+          Hiển thị trang {{ page + 1 }}
         </span>
         <div class="pagination">
-          <button class="page-link" :disabled="currentPage === 1" @click="currentPage--">‹</button>
-          <button
-            v-for="p in totalPages"
-            :key="p"
-            class="page-link"
-            :class="{ active: p === currentPage }"
-            @click="currentPage = p"
-          >{{ p }}</button>
-          <button class="page-link" :disabled="currentPage === totalPages" @click="currentPage++">›</button>
+          <button class="page-link" :disabled="page === 0" @click="changePage(page - 1)">‹</button>
+          <button class="page-link active">{{ page + 1 }}</button>
+          <button class="page-link" :disabled="isLastPage" @click="changePage(page + 1)">›</button>
         </div>
       </div>
     </div>
@@ -146,22 +140,11 @@ const searchUsername = ref('')
 const searchEmail = ref('')
 const selectedIds = ref<number[]>([])
 
-const currentPage = ref(1)
-const pageSize = ref(10)
+const page = ref(0)
+const size = ref(10)
+const isLastPage = ref(true)
 
-const filteredUsers = computed(() => {
-  return users.value.filter(u => {
-    const matchUser = !searchUsername.value || (u.username || '').toLowerCase().includes(searchUsername.value.toLowerCase())
-    const matchEmail = !searchEmail.value || (u.email || '').toLowerCase().includes(searchEmail.value.toLowerCase())
-    return matchUser && matchEmail
-  })
-})
-
-const totalPages = computed(() => Math.ceil(filteredUsers.value.length / pageSize.value) || 1)
-const startIndex = computed(() => (currentPage.value - 1) * pageSize.value)
-const endIndex = computed(() => startIndex.value + pageSize.value)
-const paginatedUsers = computed(() => filteredUsers.value.slice(startIndex.value, endIndex.value))
-const isAllSelected = computed(() => paginatedUsers.value.length > 0 && selectedIds.value.length === paginatedUsers.value.length)
+const isAllSelected = computed(() => users.value.length > 0 && selectedIds.value.length === users.value.length)
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
 
 const currentUser = computed(() => LocalStorageUtils.getUser())
@@ -203,13 +186,19 @@ const canDeleteSelected = computed(() => {
 
 const toggleAll = (e: Event) => {
   const checked = (e.target as HTMLInputElement).checked
-  selectedIds.value = checked ? paginatedUsers.value.map(u => u.userId) : []
+  selectedIds.value = checked ? users.value.map(u => u.userId) : []
 }
 
 const handleSearch = () => {
   searchUsername.value = tempSearchUsername.value
   searchEmail.value = tempSearchEmail.value
-  currentPage.value = 1
+  page.value = 0
+  fetchUsers()
+}
+
+const changePage = (newPage: number) => {
+  page.value = newPage
+  fetchUsers()
 }
 
 const handleEdit = () => {
@@ -227,11 +216,14 @@ const handleCopy = () => {
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
   if (confirm(t('message.confirmDelete', { count: selectedIds.value.length }))) {
-    try {
-      for (const id of selectedIds.value) await TsoUserApi.deleteUser(id)
-      selectedIds.value = []
-      fetchUsers()
-    } catch (e) { alert(t('message.deleteError')) }
+    const results = await Promise.allSettled(selectedIds.value.map(id => TsoUserApi.deleteUser(id)))
+    const failedCount = results.filter(r => r.status === 'rejected').length
+    if (failedCount > 0) {
+      results.forEach(r => { if (r.status === 'rejected') console.error('Failed to delete user', r.reason) })
+      alert(`${t('message.deleteError')} (${failedCount}/${selectedIds.value.length})`)
+    }
+    selectedIds.value = []
+    fetchUsers()
   }
 }
 
@@ -239,13 +231,14 @@ const form = ref({ userId: null as number | null, username: '', password: '', em
 
 const fetchUsers = async () => {
   try {
-    const res = await TsoUserApi.getAllUsers()
-    if (res && res.statusCode === 200) { 
+    const res: any = await TsoUserApi.getUsersPage(page.value, size.value, searchUsername.value || undefined, searchEmail.value || undefined)
+    if (res && res.statusCode === 200) {
       const payload = res.data
-      users.value = payload.page?.content || []; 
+      users.value = payload.page?.content || [];
       rolesList.value = payload.roles || [];
       accessesList.value = payload.accesses || [];
-      selectedIds.value = [] 
+      isLastPage.value = payload.page?.last ?? true
+      selectedIds.value = []
     }
   } catch (error) { console.error('Failed to fetch users', error) }
 }
@@ -266,12 +259,12 @@ const copyUser = (user: any) => {
 }
 
 const exportExcel = () => {
-  if (filteredUsers.value.length === 0) return
+  if (users.value.length === 0) return
   
   const headers = ['ID', 'Tài khoản', 'Email', 'Quyền hạn', 'Access ID']
   const bom = "\uFEFF";
   
-  const rows = filteredUsers.value.map(u => {
+  const rows = users.value.map(u => {
     return [
       u.userId,
       `"${(u.username || '').replace(/"/g, '""')}"`,

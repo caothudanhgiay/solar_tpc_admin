@@ -6,8 +6,8 @@
       
       <!-- Header -->
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEdit ? 'Cập nhật danh mục' : 'Thêm mới danh mục' }}</h5>
-        <button type="button" class="btn-close" @click="closeModal" aria-label="Close">
+        <h5 class="modal-title">{{ isEdit ? $t('item.editTitle') : $t('item.addTitle') }}</h5>
+        <button type="button" class="btn-close" @click="closeModal" :aria-label="$t('common.close')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
@@ -18,39 +18,39 @@
           <div class="form-grid">
             
             <div class="form-group">
-              <label class="form-label">Mã mục <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.itemCode') }} <span class="text-danger">*</span></label>
               <input type="text" v-model="form.itemCode" class="form-control" required />
             </div>
-            
+
             <div class="form-group">
-              <label class="form-label">Mã nhóm mục <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.groupItemCode') }} <span class="text-danger">*</span></label>
               <input type="text" v-model="form.groupItemCode" class="form-control" required />
             </div>
-            
+
             <div class="form-group col-span-2">
-              <label class="form-label">Tên nhóm mục <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.groupItemName') }} <span class="text-danger">*</span></label>
               <input type="text" v-model="form.groupItemName" class="form-control" required />
             </div>
-            
+
             <div class="form-group">
-              <label class="form-label">Mã mục con <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.itemSubCode') }} <span class="text-danger">*</span></label>
               <input type="text" v-model="form.itemSubCode" class="form-control" required />
             </div>
 
             <div class="form-group">
-              <label class="form-label">Tên mục con <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.itemSubName') }} <span class="text-danger">*</span></label>
               <input type="text" v-model="form.itemSubName" class="form-control" required />
             </div>
-            
+
             <div class="form-group col-span-2">
-              <label class="form-label">Mô tả chức năng</label>
+              <label class="form-label">{{ $t('item.description') }}</label>
               <textarea v-model="form.itemDescription" class="form-control" rows="3"></textarea>
             </div>
-            
+
             <div class="form-group">
-              <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+              <label class="form-label">{{ $t('item.status') }} <span class="text-danger">*</span></label>
               <select v-model="form.serviceStatus" class="form-control" required>
-                <option value="" disabled>-- Chọn trạng thái --</option>
+                <option value="" disabled>{{ $t('item.selectStatusPlaceholder') }}</option>
                 <option v-for="st in statuses" :key="st.id" :value="st.id">
                   {{ st.name }}
                 </option>
@@ -64,12 +64,12 @@
       <!-- Footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-dialog" @click="closeModal" :disabled="isSubmitting">
-          {{ $t('button.cancel') || 'Hủy bỏ' }}
+          {{ $t('button.cancel') }}
         </button>
         <button type="submit" form="itemForm" class="btn btn-primary btn-dialog" :disabled="isSubmitting">
           <svg v-if="isSubmitting" class="spinner" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-          {{ $t('button.save') || 'Lưu' }}
+          {{ $t('button.save') }}
         </button>
       </div>
       
@@ -79,7 +79,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoItemApi } from '../../../api/TsoItemApi'
+import { ApiException } from '../../../exception/exception'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   initialData?: any
@@ -123,7 +127,7 @@ const handleSubmit = async () => {
     emit('saved')
   } catch (error) {
     console.error(error)
-    alert('Có lỗi xảy ra khi lưu dữ liệu!')
+    alert(error instanceof ApiException ? error.message : t('item.saveError'))
   } finally {
     isSubmitting.value = false
   }

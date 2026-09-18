@@ -6,23 +6,23 @@
       <div class="action-buttons">
           <button class="btn btn-primary" @click="openForm(null)">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            {{ $t('button.add') || 'Thêm mới' }}
+            {{ $t('button.add') }}
           </button>
           <button class="btn btn-primary" :disabled="!isSingleSelected" @click="handleEdit">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            {{ $t('button.edit') || 'Sửa' }}
+            {{ $t('button.edit') }}
           </button>
           <button class="btn btn-info" :disabled="!isSingleSelected" @click="handleCopy">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            {{ $t('button.copy') || 'Copy' }}
+            {{ $t('button.copy') }}
           </button>
           <button class="btn btn-danger" :disabled="selectedIds.length === 0" @click="handleDelete">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            {{ $t('button.delete') || 'Xóa' }}
+            {{ $t('button.delete') }}
           </button>
           <button class="btn btn-success" style="background: #28a745; color: white;" @click="handleExportExcel">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            {{ $t('button.exportExcel') || 'Xuất Excel' }}
+            {{ $t('button.exportExcel') }}
           </button>
       </div>
 
@@ -32,7 +32,7 @@
           <input
             type="text"
             v-model="tempSearchProjectName"
-            placeholder="Tìm theo tên dự án..."
+            :placeholder="$t('project.searchPlaceholder')"
             class="search-input"
             @keyup.enter="handleSearch"
           />
@@ -40,7 +40,7 @@
         
         <button class="btn btn-primary" @click="handleSearch" style="margin-left: 8px; width: max-content;">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          {{ $t('button.search') || 'Tìm kiếm' }}
+          {{ $t('button.search') }}
         </button>
       </div>
 
@@ -53,25 +53,25 @@
                 <th class="th-check">
                   <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
                 </th>
-                <th style="width: 50px; text-align: center;">STT</th>
+                <th style="width: 50px; text-align: center;">{{ $t('common.stt') }}</th>
                 <th>ID</th>
-                <th>Mã DA</th>
-                <th>Ảnh Đại Diện</th>
-                <th>Tiêu Đề</th>
-                <th>Tên Dự Án</th>
-                <th>Mô Tả</th>
-                <th>Địa Chỉ</th>
-                <th>Công Suất</th>
-                <th>Tiết Kiệm</th>
-                <th>Bắt Đầu</th>
-                <th>Kết Thúc</th>
-                <th>Tiêu Biểu</th>
-                <th>Trạng Thái</th>
+                <th>{{ $t('project.code') }}</th>
+                <th>{{ $t('project.featuredImage') }}</th>
+                <th>{{ $t('project.title') }}</th>
+                <th>{{ $t('project.name') }}</th>
+                <th>{{ $t('project.description') }}</th>
+                <th>{{ $t('project.address') }}</th>
+                <th>{{ $t('project.solarPower') }}</th>
+                <th>{{ $t('project.savingPower') }}</th>
+                <th>{{ $t('project.startDate') }}</th>
+                <th>{{ $t('project.endDate') }}</th>
+                <th>{{ $t('project.featured') }}</th>
+                <th>{{ $t('project.status') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(item, index) in filteredProjects"
+                v-for="(item, index) in projects"
                 :key="item.projectId"
                 :class="{ 'row-selected': selectedIds.includes(item.projectId) }"
               >
@@ -98,8 +98,8 @@
                 </td>
                 <td>{{ item.processStatusName }}</td>
               </tr>
-              <tr v-if="filteredProjects.length === 0">
-                <td colspan="14" class="empty-row">Không có dữ liệu</td>
+              <tr v-if="projects.length === 0">
+                <td colspan="14" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -107,14 +107,14 @@
       </div>
 
       <!-- Card Footer: Pagination -->
-      <div class="card-footer" v-if="filteredProjects.length > 0">
+      <div class="card-footer" v-if="projects.length > 0">
         <span class="showing-text">
-          Hiển thị trang {{ page + 1 }}
+          {{ $t('common.showingPage', { page: page + 1 }) }}
         </span>
         <div class="pagination">
           <button class="page-link" :disabled="page === 0" @click="changePage(page - 1)">‹</button>
           <button class="page-link active">{{ page + 1 }}</button>
-          <button class="page-link" :disabled="projects.length < size" @click="changePage(page + 1)">›</button>
+          <button class="page-link" :disabled="isLastPage" @click="changePage(page + 1)">›</button>
         </div>
       </div>
     </div>
@@ -137,7 +137,7 @@ import { TsoProjectApi } from '../../../api/TsoProjectApi'
 import TsoProjectDialog from './TsoProjectDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
-useI18n()
+const { t } = useI18n()
 
 const mainContainerRef = ref<HTMLElement | null>(null)
 useFocusTrap(mainContainerRef, { autoFocus: false })
@@ -148,29 +148,24 @@ const showModal = ref(false)
 const tempSearchProjectName = ref('')
 const searchProjectName = ref('')
 const selectedIds = ref<number[]>([])
+const isLastPage = ref(true)
 
 const page = ref(0)
 const size = ref(10)
 
-const filteredProjects = computed(() => {
-  const result = projects.value.filter(p => {
-    const matchName = !searchProjectName.value || (p.projectName || '').toLowerCase().includes(searchProjectName.value.toLowerCase())
-    return matchName
-  })
-  return result
-})
-
-const isAllSelected = computed(() => filteredProjects.value.length > 0 && selectedIds.value.length === filteredProjects.value.length)
+const isAllSelected = computed(() => projects.value.length > 0 && selectedIds.value.length === projects.value.length)
 const isSingleSelected = computed(() => selectedIds.value.length === 1)
 
 const toggleAll = (e: Event) => {
   const checked = (e.target as HTMLInputElement).checked
-  selectedIds.value = checked ? filteredProjects.value.map(p => p.projectId) : []
+  selectedIds.value = checked ? projects.value.map(p => p.projectId) : []
 }
 
 
 const handleSearch = () => {
   searchProjectName.value = tempSearchProjectName.value
+  page.value = 0
+  fetchProjects()
 }
 
 const handleEdit = () => {
@@ -187,20 +182,21 @@ const handleCopy = () => {
 
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
-  if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.value.length} dự án đã chọn?`)) {
-    try {
-      for (const id of selectedIds.value) {
-        await TsoProjectApi.deleteProject(id)
-      }
-      selectedIds.value = []
-      fetchProjects()
-    } catch (e) { alert('Có lỗi khi xóa') }
+  if (confirm(t('project.confirmDelete', { count: selectedIds.value.length }))) {
+    const results = await Promise.allSettled(selectedIds.value.map(id => TsoProjectApi.deleteProject(id)))
+    const failedCount = results.filter(r => r.status === 'rejected').length
+    if (failedCount > 0) {
+      results.forEach(r => { if (r.status === 'rejected') console.error('Failed to delete project', r.reason) })
+      alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
+    }
+    selectedIds.value = []
+    fetchProjects()
   }
 }
 
 const handleExportExcel = () => {
-  if (filteredProjects.value.length === 0) {
-    alert('Không có dữ liệu để xuất!')
+  if (projects.value.length === 0) {
+    alert(t('project.noDataExport'))
     return
   }
   
@@ -213,7 +209,7 @@ const handleExportExcel = () => {
   let csvContent = "\uFEFF" // BOM for UTF-8
   csvContent += headers.map(h => `"${h}"`).join(',') + '\n'
   
-  filteredProjects.value.forEach((item, index) => {
+  projects.value.forEach((item, index) => {
     const isFeatured = item.isFeatured === 1 ? 'Có' : 'Không'
     
     const row = [
@@ -255,12 +251,13 @@ const form = ref<any>({})
 
 const fetchProjects = async () => {
   try {
-    const res = await TsoProjectApi.getProjectsPage(page.value, size.value)
-    if (res.data.statusCode === 200) {
-      const payload = res.data.data
+    const res: any = await TsoProjectApi.getProjectsPage(page.value, size.value, searchProjectName.value || undefined)
+    if (res.statusCode === 200) {
+      const payload = res.data
 
       projects.value = payload.page?.content || []
       projectStatuses.value = payload.statuses || []
+      isLastPage.value = payload.page?.last ?? true
       selectedIds.value = []
     }
   } catch (error) { console.error('Failed to fetch projects', error) }
@@ -269,9 +266,9 @@ const fetchProjects = async () => {
 const openForm = async (item: any) => {
   if (item) {
     try {
-      const res = await TsoProjectApi.getProjectById(item.projectId)
-      if (res.data.statusCode === 200) {
-        form.value = res.data.data
+      const res: any = await TsoProjectApi.getProjectById(item.projectId)
+      if (res.statusCode === 200) {
+        form.value = res.data
         showModal.value = true
       }
     } catch (e) {
@@ -300,9 +297,9 @@ const openForm = async (item: any) => {
 
 const copyItem = async (item: any) => {
   try {
-    const res = await TsoProjectApi.getProjectById(item.projectId)
-    if (res.data.statusCode === 200) {
-      const data = res.data.data
+    const res: any = await TsoProjectApi.getProjectById(item.projectId)
+    if (res.statusCode === 200) {
+      const data = res.data
       data.projectId = null
       data.projectName = data.projectName + ' (Copy)'
       if (data.details) {

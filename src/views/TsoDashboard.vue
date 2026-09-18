@@ -3,46 +3,46 @@
     <div class="metrics-grid">
           <div class="metric-card glass-panel">
             <div class="metric-card-header">
-              <span class="metric-title">Sản Lượng Hôm Nay</span>
+              <span class="metric-title">{{ $t('dashboardPage.todayProduction') }}</span>
               <div class="metric-icon-box icon-yellow">⚡</div>
             </div>
             <div class="metric-value">1,245 kWh</div>
             <div class="metric-footer">
               <span class="trend-up">↑ 12%</span>
-              <span class="trend-text">so với hôm qua</span>
+              <span class="trend-text">{{ $t('dashboardPage.vsYesterday') }}</span>
             </div>
           </div>
           <div class="metric-card glass-panel">
             <div class="metric-card-header">
-              <span class="metric-title">Doanh Thu Dự Kiến</span>
+              <span class="metric-title">{{ $t('dashboardPage.expectedRevenue') }}</span>
               <div class="metric-icon-box icon-emerald">💵</div>
             </div>
             <div class="metric-value">2,850,000 đ</div>
             <div class="metric-footer">
               <span class="trend-up">↑ 8%</span>
-              <span class="trend-text">so với hôm qua</span>
+              <span class="trend-text">{{ $t('dashboardPage.vsYesterday') }}</span>
             </div>
           </div>
           <div class="metric-card glass-panel">
             <div class="metric-card-header">
-              <span class="metric-title">Hiệu Suất Hệ Thống</span>
+              <span class="metric-title">{{ $t('dashboardPage.systemEfficiency') }}</span>
               <div class="metric-icon-box icon-blue">📈</div>
             </div>
             <div class="metric-value">94.5%</div>
             <div class="metric-footer">
               <span class="trend-stable">→ 0%</span>
-              <span class="trend-text">ổn định</span>
+              <span class="trend-text">{{ $t('dashboardPage.stable') }}</span>
             </div>
           </div>
           <div class="metric-card glass-panel">
             <div class="metric-card-header">
-              <span class="metric-title">Cảnh Báo</span>
+              <span class="metric-title">{{ $t('dashboardPage.warnings') }}</span>
               <div class="metric-icon-box icon-red">⚠️</div>
             </div>
             <div class="metric-value">2</div>
             <div class="metric-footer">
               <span class="trend-down">↓ 1</span>
-              <span class="trend-text">cần xử lý</span>
+              <span class="trend-text">{{ $t('dashboardPage.needsAttention') }}</span>
             </div>
           </div>
         </div>
@@ -50,10 +50,10 @@
         <div class="sections-grid">
           <div class="section-panel glass-panel">
             <div class="panel-header">
-              <span class="panel-title">Biểu Đồ Sản Lượng</span>
+              <span class="panel-title">{{ $t('dashboardPage.productionChart') }}</span>
               <div class="panel-actions">
-                <button class="btn-small active">Hôm nay</button>
-                <button class="btn-small">Tuần này</button>
+                <button class="btn-small active">{{ $t('dashboardPage.today') }}</button>
+                <button class="btn-small">{{ $t('dashboardPage.thisWeek') }}</button>
               </div>
             </div>
             <!-- Mock Chart -->
@@ -88,29 +88,29 @@
 
           <div class="section-panel glass-panel">
             <div class="panel-header">
-              <span class="panel-title">Trạng Thái Inverter</span>
+              <span class="panel-title">{{ $t('dashboardPage.inverterStatus') }}</span>
             </div>
             <div class="control-grid">
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                   <span class="status-indicator status-active"></span>
-                  <span>Inverter #1</span>
+                  <span>{{ $t('dashboardPage.inverterLabel', { n: 1 }) }}</span>
                 </div>
-                <span style="font-weight: bold; color: var(--success);">Online</span>
+                <span style="font-weight: bold; color: var(--success);">{{ $t('dashboardPage.online') }}</span>
               </div>
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                   <span class="status-indicator status-active"></span>
-                  <span>Inverter #2</span>
+                  <span>{{ $t('dashboardPage.inverterLabel', { n: 2 }) }}</span>
                 </div>
-                <span style="font-weight: bold; color: var(--success);">Online</span>
+                <span style="font-weight: bold; color: var(--success);">{{ $t('dashboardPage.online') }}</span>
               </div>
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                   <span class="status-indicator status-maintenance"></span>
-                  <span>Inverter #3</span>
+                  <span>{{ $t('dashboardPage.inverterLabel', { n: 3 }) }}</span>
                 </div>
-                <span style="font-weight: bold; color: var(--primary);">Bảo trì</span>
+                <span style="font-weight: bold; color: var(--primary);">{{ $t('dashboardPage.maintenance') }}</span>
               </div>
             </div>
           </div>

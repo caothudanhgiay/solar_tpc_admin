@@ -3,7 +3,7 @@
     <div class="modal-dialog" ref="dialogRef">
       <!-- Header -->
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEdit ? 'Cập nhật Tài sản' : 'Thêm mới Tài sản' }}</h5>
+        <h5 class="modal-title">{{ isEdit ? $t('assetPage.editTitle') : $t('assetPage.addTitle') }}</h5>
         <button class="modal-close" @click="closeForm">&times;</button>
       </div>
 
@@ -16,68 +16,68 @@
         <form @submit.prevent="submitForm">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Mã tài sản <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.code') }} <span class="required">*</span></label>
               <input type="text" v-model="form.assetCode" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Tên tài sản <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.name') }} <span class="required">*</span></label>
               <input type="text" v-model="form.assetName" required class="form-control" />
             </div>
             <div class="form-group full-width">
-              <label class="form-label">Ảnh thiết bị</label>
+              <label class="form-label">{{ $t('assetPage.image') }}</label>
               <input type="file" @change="onFileChange" accept="image/*" class="form-control" />
               <div v-if="form.assetImage && !selectedFile" style="margin-top: 8px;">
-                <span class="text-muted">Đã có ảnh: {{ form.assetImage }}</span>
+                <span class="text-muted">{{ $t('assetPage.currentImage', { image: form.assetImage }) }}</span>
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Nhóm tài sản <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.group') }} <span class="required">*</span></label>
               <input type="text" v-model="form.assetGroup" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Loại tài sản <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.type') }} <span class="required">*</span></label>
               <input type="text" v-model="form.assetType" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Người cấp <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.provider') }} <span class="required">*</span></label>
               <input type="text" v-model="form.provider" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Người dùng hiện tại <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.currentUserLabel') }} <span class="required">*</span></label>
               <input type="text" v-model="form.currentUsr" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Giá</label>
+              <label class="form-label">{{ $t('assetPage.price') }}</label>
               <input type="number" step="0.0001" v-model="form.price" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày sử dụng <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.usageDateLabel') }} <span class="required">*</span></label>
               <input type="datetime-local" v-model="form.startDate" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày hết hạn <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.endDate') }} <span class="required">*</span></label>
               <input type="datetime-local" v-model="form.endDate" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày mua <span class="required">*</span></label>
+              <label class="form-label">{{ $t('assetPage.dateOfPurchase') }} <span class="required">*</span></label>
               <input type="datetime-local" v-model="form.dateOfPurchase" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Thời gian bảo hành (tháng)</label>
+              <label class="form-label">{{ $t('assetPage.warrantyPeriod') }}</label>
               <input type="number" v-model="form.warrantyPeriod" class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Trạng thái</label>
+              <label class="form-label">{{ $t('assetPage.status') }}</label>
               <TsoSelectOption v-model="form.assetStatus" :options="assetStatuses" />
             </div>
           </div>
 
           <!-- Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">Hủy</button>
+            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">{{ $t('button.cancel') }}</button>
             <button type="submit" class="btn btn-primary btn-dialog" :disabled="loading">
               <span v-if="loading" class="spinner"></span>
-              <span v-else>Lưu thông tin</span>
+              <span v-else>{{ $t('button.save') }}</span>
             </button>
           </div>
         </form>
@@ -88,10 +88,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoAssetManagementApi } from '../../../api/TsoAssetManagementApi'
+import { ApiException } from '../../../exception/exception'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
 
+const { t } = useI18n()
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
 
@@ -162,8 +165,8 @@ const submitForm = async () => {
       await TsoAssetManagementApi.createAsset(payload, selectedFile.value || undefined)
     }
     emit('saved')
-  } catch (e: any) {
-    errorMsg.value = e.response?.data?.message || 'Có lỗi xảy ra'
+  } catch (e) {
+    errorMsg.value = e instanceof ApiException ? e.message : t('assetPage.saveError')
   } finally {
     loading.value = false
   }

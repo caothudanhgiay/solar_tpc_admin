@@ -15,7 +15,14 @@
     "loading": "Đang xác thực...",
     "errorEmpty": "Tài khoản và mật khẩu không được để trống.",
     "errorInvalid": "Tài khoản hoặc mật khẩu không chính xác.",
-    "errorServer": "Lỗi máy chủ, vui lòng thử lại sau."
+    "errorServer": "Lỗi máy chủ, vui lòng thử lại sau.",
+    "welcomeBack": "Chào mừng trở lại,",
+    "signInSubtitle": "Vui lòng đăng nhập vào tài khoản của bạn.",
+    "recoverPassword": "Quên mật khẩu",
+    "loginButton": "Đăng Nhập Hệ Thống",
+    "noAccount": "Chưa có tài khoản?",
+    "signUpNow": "Đăng ký ngay",
+    "copyright": "Bản quyền © Solar TPC {year}"
   },
   "button": {
     "search": "Tìm kiếm",
@@ -30,6 +37,26 @@
     "save": "Lưu",
     "cancel": "Hủy bỏ"
   },
+  "layout": {
+    "navLabel": "QUẢN LÝ",
+    "navDashboard": "Tổng quan",
+    "navProjects": "Dự án",
+    "navUsers": "Người dùng",
+    "navItems": "Danh mục chung",
+    "searchPlaceholder": "Nhập từ khóa tìm kiếm...",
+    "defaultUserName": "Quản trị viên",
+    "defaultUserRole": "Quản trị viên hệ thống",
+    "changePassword": "Đổi mật khẩu",
+    "adminSubtitle": "Quản trị viên có toàn quyền kiểm soát hệ thống.",
+    "title": {
+      "dashboard": "Bảng điều khiển",
+      "projects": "Sản phẩm",
+      "assets": "Quản lí tài sản",
+      "services": "Quản lý Dịch vụ",
+      "users": "Quản lý Người dùng",
+      "items": "Danh mục chung"
+    }
+  },
   "role": {
     "root": "Quản trị viên cấp cao (Root)",
     "admin": "Quản trị viên (Admin)",
@@ -39,7 +66,11 @@
   "common": {
     "unknownError": "Lỗi không xác định",
     "badRequest": "Yêu cầu không hợp lệ",
-    "serverError": "Lỗi máy chủ nội bộ"
+    "serverError": "Lỗi máy chủ nội bộ",
+    "stt": "STT",
+    "showingPage": "Hiển thị trang {page}",
+    "deleteFailedCount": "Xóa thất bại {failed}/{total} bản ghi. Vui lòng thử lại.",
+    "close": "Đóng"
   },
   "message": {
     "confirmDelete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
@@ -49,7 +80,52 @@
     "confirm_delete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
     "delete_error": "Lỗi khi xóa dữ liệu"
   },
-  "project": {},
+  "dashboardPage": {
+    "todayProduction": "Sản Lượng Hôm Nay",
+    "vsYesterday": "so với hôm qua",
+    "expectedRevenue": "Doanh Thu Dự Kiến",
+    "systemEfficiency": "Hiệu Suất Hệ Thống",
+    "stable": "ổn định",
+    "warnings": "Cảnh Báo",
+    "needsAttention": "cần xử lý",
+    "productionChart": "Biểu Đồ Sản Lượng",
+    "today": "Hôm nay",
+    "thisWeek": "Tuần này",
+    "inverterStatus": "Trạng Thái Inverter",
+    "inverterLabel": "Inverter #{n}",
+    "online": "Online",
+    "maintenance": "Bảo trì"
+  },
+  "project": {
+    "addTitle": "Thêm mới Dự án",
+    "editTitle": "Cập nhật Dự án",
+    "codePlaceholder": "Ví dụ: DA001",
+    "solarPowerLabel": "Công suất điện (kWp)",
+    "savingPowerLabel": "Tiết kiệm (kWh)",
+    "featuredQuestion": "Dự án tiêu biểu?",
+    "detailsSection": "Chi tiết dự án",
+    "detailContent": "Nội dung",
+    "constructionDate": "Ngày thi công",
+    "detailImage": "Ảnh chi tiết",
+    "noDetails": "Chưa có chi tiết nào.",
+    "codeRequired": "Vui lòng nhập Mã dự án",
+    "saveError": "Có lỗi xảy ra khi lưu dữ liệu.",
+    "code": "Mã DA",
+    "featuredImage": "Ảnh Đại Diện",
+    "title": "Tiêu Đề",
+    "name": "Tên Dự Án",
+    "description": "Mô Tả",
+    "address": "Địa Chỉ",
+    "solarPower": "Công Suất",
+    "savingPower": "Tiết Kiệm",
+    "startDate": "Bắt Đầu",
+    "endDate": "Kết Thúc",
+    "featured": "Tiêu Biểu",
+    "status": "Trạng Thái",
+    "searchPlaceholder": "Tìm theo tên dự án...",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} dự án đã chọn?",
+    "noDataExport": "Không có dữ liệu để xuất!"
+  },
   "asset": {
     "status": {
       "not_used": "Chưa sử dụng",
@@ -77,6 +153,68 @@
     "group": "Nhóm dịch vụ",
     "type": "Loại dịch vụ",
     "status": "Trạng thái",
-    "search_placeholder": "Tìm theo tên/mã dịch vụ..."
+    "search_placeholder": "Tìm theo tên/mã dịch vụ...",
+    "selectGroupPlaceholder": "-- Chọn nhóm dịch vụ --",
+    "selectTypePlaceholder": "-- Chọn loại dịch vụ --",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} dịch vụ đã chọn?",
+    "saveError": "Có lỗi xảy ra"
+  },
+  "item": {
+    "addTitle": "Thêm mới danh mục",
+    "editTitle": "Cập nhật danh mục",
+    "selectStatusPlaceholder": "-- Chọn trạng thái --",
+    "itemCode": "Mã Mục",
+    "groupItemCode": "Mã Nhóm Mục",
+    "groupItemName": "Tên Nhóm Mục",
+    "itemSubCode": "Mã Mục Con",
+    "itemSubName": "Tên Mục Con",
+    "description": "Mô Tả",
+    "status": "Trạng Thái",
+    "searchPlaceholder": "Tìm kiếm danh mục...",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} bản ghi đã chọn?",
+    "saveError": "Có lỗi xảy ra khi lưu dữ liệu!"
+  },
+  "assetPage": {
+    "addTitle": "Thêm mới Tài sản",
+    "editTitle": "Cập nhật Tài sản",
+    "currentImage": "Đã có ảnh: {image}",
+    "currentUserLabel": "Người dùng hiện tại",
+    "usageDateLabel": "Ngày sử dụng",
+    "saveError": "Có lỗi xảy ra",
+    "code": "Mã Tài Sản",
+    "image": "Ảnh Thiết Bị",
+    "name": "Tên Tài Sản",
+    "group": "Nhóm",
+    "type": "Loại",
+    "provider": "Người Cấp",
+    "currentUser": "Người Dùng",
+    "startDate": "Ngày Bắt Đầu",
+    "endDate": "Ngày Hết Hạn",
+    "price": "Giá",
+    "warrantyPeriod": "Bảo Hành (Tháng)",
+    "dateOfPurchase": "Ngày Mua",
+    "status": "Trạng Thái",
+    "searchPlaceholder": "Tìm theo tên/nhóm tài sản...",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {count} tài sản đã chọn?",
+    "noDataExport": "Không có dữ liệu để xuất!"
+  },
+  "user": {
+    "username": "Tài khoản",
+    "email": "Email",
+    "role": "Quyền hạn",
+    "accessId": "Access ID",
+    "addTitle": "Thêm mới Người dùng",
+    "editTitle": "Cập nhật Người dùng",
+    "password": "Mật khẩu",
+    "roleLabel": "Quyền hạn (Role)",
+    "saveError": "Có lỗi xảy ra khi lưu dữ liệu."
+  },
+  "changePassword": {
+    "oldPassword": "Nhập lại mật khẩu (Mật khẩu cũ)",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "mismatchError": "Mật khẩu xác nhận không khớp.",
+    "success": "Đổi mật khẩu thành công!",
+    "error": "Lỗi khi đổi mật khẩu"
   }
 }

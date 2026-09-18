@@ -3,7 +3,7 @@
     <div class="modal-dialog" ref="dialogRef">
       <!-- Header -->
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEdit ? 'Cập nhật Dự án' : 'Thêm mới Dự án' }}</h5>
+        <h5 class="modal-title">{{ isEdit ? $t('project.editTitle') : $t('project.addTitle') }}</h5>
         <button class="modal-close" @click="closeForm">&times;</button>
       </div>
 
@@ -16,72 +16,72 @@
         <form @submit.prevent="submitForm">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Mã dự án <span class="required">*</span></label>
-              <input type="text" v-model="form.projectCode" required class="form-control" placeholder="Ví dụ: DA001" />
+              <label class="form-label">{{ $t('project.code') }} <span class="required">*</span></label>
+              <input type="text" v-model="form.projectCode" required class="form-control" :placeholder="$t('project.codePlaceholder')" />
             </div>
             <div class="form-group">
-              <label class="form-label">Tiêu đề dự án <span class="required">*</span></label>
+              <label class="form-label">{{ $t('project.title') }} <span class="required">*</span></label>
               <input type="text" v-model="form.projectTitle" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Tên dự án <span class="required">*</span></label>
+              <label class="form-label">{{ $t('project.name') }} <span class="required">*</span></label>
               <input type="text" v-model="form.projectName" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Địa chỉ <span class="required">*</span></label>
+              <label class="form-label">{{ $t('project.address') }} <span class="required">*</span></label>
               <input type="text" v-model="form.projectAddress" required class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Công suất điện (kWp)</label>
+              <label class="form-label">{{ $t('project.solarPowerLabel') }}</label>
               <input type="number" step="0.0001" v-model="form.solarPower" class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Tiết kiệm (kHw)</label>
+              <label class="form-label">{{ $t('project.savingPowerLabel') }}</label>
               <input type="number" step="0.0001" v-model="form.savingPower" class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Trạng thái</label>
+              <label class="form-label">{{ $t('project.status') }}</label>
               <TsoSelectOption v-model="form.processStatus" :options="projectStatuses" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày bắt đầu</label>
+              <label class="form-label">{{ $t('project.startDate') }}</label>
               <input type="date" v-model="form.startDate" class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Ngày kết thúc</label>
+              <label class="form-label">{{ $t('project.endDate') }}</label>
               <input type="date" v-model="form.endDate" class="form-control" />
             </div>
             <div class="form-group">
-              <label class="form-label">Dự án tiêu biểu?</label>
+              <label class="form-label">{{ $t('project.featuredQuestion') }}</label>
               <div style="padding: 8px 0;">
                 <input type="checkbox" v-model="form.isFeatured" :true-value="1" :false-value="0" />
               </div>
             </div>
             <div class="form-group full-width">
-              <label class="form-label">Mô tả</label>
+              <label class="form-label">{{ $t('project.description') }}</label>
               <div style="background-color: white; border-radius: 4px; margin-bottom: 20px;">
                 <QuillEditor v-model:content="form.description" contentType="html" theme="snow" toolbar="full" />
               </div>
             </div>
             <div class="form-group full-width">
-              <label class="form-label">Ảnh đại diện (Featured Image)</label>
+              <label class="form-label">{{ $t('project.featuredImage') }}</label>
               <input type="file" @change="uploadMainImage" class="form-control" />
               <img v-if="form.featuredImage" :src="form.featuredImage" style="max-height: 150px; width: auto; max-width: 100%; object-fit: contain; margin-top: 10px; border-radius: 4px; border: 1px solid #ddd;" />
             </div>
           </div>
 
           <hr style="margin: 20px 0; border: 0; border-top: 1px solid #dee2e6;" />
-          
+
           <div class="details-section">
             <div class="details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h6 style="margin: 0; font-weight: 600; color: #343a40; text-transform: uppercase; font-size: 14px;">Chi tiết dự án</h6>
+              <h6 style="margin: 0; font-weight: 600; color: #343a40; text-transform: uppercase; font-size: 14px;">{{ $t('project.detailsSection') }}</h6>
               <div class="details-actions" style="display: flex; gap: 8px;">
-                <button type="button" class="btn btn-primary btn-action" @click="addDetail">Thêm</button>
-                <button type="button" class="btn btn-info btn-action" @click="duplicateSelectedDetails">Nhân bản</button>
-                <button type="button" class="btn btn-danger btn-action" @click="removeSelectedDetails">Xóa</button>
+                <button type="button" class="btn btn-primary btn-action" @click="addDetail">{{ $t('button.add') }}</button>
+                <button type="button" class="btn btn-info btn-action" @click="duplicateSelectedDetails">{{ $t('button.copy') }}</button>
+                <button type="button" class="btn btn-danger btn-action" @click="removeSelectedDetails">{{ $t('button.delete') }}</button>
               </div>
             </div>
-            
+
             <div style="overflow-x: auto;">
               <table class="table details-table">
                 <thead>
@@ -89,14 +89,14 @@
                     <th style="width: 40px; text-align: center;">
                       <input type="checkbox" @change="toggleAllDetails" :checked="isAllDetailsSelected" />
                     </th>
-                    <th>Nội dung</th>
-                    <th style="width: 150px;">Ngày thi công</th>
-                    <th style="width: 250px;">Ảnh chi tiết</th>
+                    <th>{{ $t('project.detailContent') }}</th>
+                    <th style="width: 150px;">{{ $t('project.constructionDate') }}</th>
+                    <th style="width: 250px;">{{ $t('project.detailImage') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-if="form.details.length === 0">
-                    <td colspan="4" style="text-align: center; padding: 20px; color: #6c757d;">Chưa có chi tiết nào.</td>
+                    <td colspan="4" style="text-align: center; padding: 20px; color: #6c757d;">{{ $t('project.noDetails') }}</td>
                   </tr>
                   <tr v-for="(detail, index) in form.details" :key="index">
                     <td style="text-align: center; vertical-align: middle;">
@@ -120,10 +120,10 @@
 
           <!-- Footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">Hủy</button>
+            <button type="button" class="btn btn-secondary btn-dialog" @click="closeForm">{{ $t('button.cancel') }}</button>
             <button type="submit" class="btn btn-primary btn-dialog" :disabled="loading">
               <span v-if="loading" class="spinner"></span>
-              <span v-else>Lưu thông tin</span>
+              <span v-else>{{ $t('button.save') }}</span>
             </button>
           </div>
         </form>
@@ -134,12 +134,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { TsoProjectApi } from '../../../api/TsoProjectApi'
+import { ApiException } from '../../../exception/exception'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
+const { t } = useI18n()
 const dialogRef = ref<HTMLElement | null>(null)
 useFocusTrap(dialogRef)
 
@@ -248,7 +251,7 @@ const closeForm = () => {
 
 const submitForm = async () => {
   if (!form.value.projectCode) {
-    errorMsg.value = 'Vui lòng nhập Mã dự án'
+    errorMsg.value = t('project.codeRequired')
     return
   }
 
@@ -283,15 +286,15 @@ const submitForm = async () => {
       await TsoProjectApi.createProject(formData)
     }
     emit('saved')
-  } catch (error: any) {
+  } catch (error) {
     console.error('Save failed', error)
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMsg.value = error.response.data.message
-      if (error.response.data.data) {
-        errorMsg.value += ' ' + JSON.stringify(error.response.data.data)
+    if (error instanceof ApiException) {
+      errorMsg.value = error.message
+      if (error.data?.data) {
+        errorMsg.value += ' ' + JSON.stringify(error.data.data)
       }
     } else {
-      errorMsg.value = 'Có lỗi xảy ra khi lưu dữ liệu.'
+      errorMsg.value = t('project.saveError')
     }
   } finally {
     loading.value = false

@@ -15,7 +15,14 @@
     "loading": "Authenticating...",
     "errorEmpty": "Username and password are required.",
     "errorInvalid": "Invalid username or password.",
-    "errorServer": "Server error, please try again later."
+    "errorServer": "Server error, please try again later.",
+    "welcomeBack": "Welcome back,",
+    "signInSubtitle": "Please sign in to your account below.",
+    "recoverPassword": "Recover Password",
+    "loginButton": "Login to Dashboard",
+    "noAccount": "No account?",
+    "signUpNow": "Sign up now",
+    "copyright": "Copyright © Solar TPC {year}"
   },
   "button": {
     "search": "Search",
@@ -30,6 +37,26 @@
     "save": "Save",
     "cancel": "Cancel"
   },
+  "layout": {
+    "navLabel": "MANAGEMENT",
+    "navDashboard": "Overview",
+    "navProjects": "Projects",
+    "navUsers": "Users",
+    "navItems": "General Catalog",
+    "searchPlaceholder": "Type to search...",
+    "defaultUserName": "Admin",
+    "defaultUserRole": "System Administrator",
+    "changePassword": "Change Password",
+    "adminSubtitle": "Administrators have full control over the system.",
+    "title": {
+      "dashboard": "Dashboard",
+      "projects": "Projects",
+      "assets": "Asset Management",
+      "services": "Service Management",
+      "users": "User Management",
+      "items": "General Catalog"
+    }
+  },
   "role": {
     "root": "Super Administrator (Root)",
     "admin": "Administrator (Admin)",
@@ -39,7 +66,11 @@
   "common": {
     "unknownError": "Unknown error",
     "badRequest": "Invalid request",
-    "serverError": "Internal server error"
+    "serverError": "Internal server error",
+    "stt": "No.",
+    "showingPage": "Showing page {page}",
+    "deleteFailedCount": "Failed to delete {failed}/{total} records. Please try again.",
+    "close": "Close"
   },
   "message": {
     "confirmDelete": "Are you sure you want to delete {count} selected records?",
@@ -49,7 +80,52 @@
     "confirm_delete": "Are you sure you want to delete {count} selected records?",
     "delete_error": "Error deleting data"
   },
-  "project": {},
+  "dashboardPage": {
+    "todayProduction": "Today's Production",
+    "vsYesterday": "vs yesterday",
+    "expectedRevenue": "Expected Revenue",
+    "systemEfficiency": "System Efficiency",
+    "stable": "stable",
+    "warnings": "Warnings",
+    "needsAttention": "needs attention",
+    "productionChart": "Production Chart",
+    "today": "Today",
+    "thisWeek": "This week",
+    "inverterStatus": "Inverter Status",
+    "inverterLabel": "Inverter #{n}",
+    "online": "Online",
+    "maintenance": "Maintenance"
+  },
+  "project": {
+    "addTitle": "Add Project",
+    "editTitle": "Edit Project",
+    "codePlaceholder": "e.g. DA001",
+    "solarPowerLabel": "Solar Power (kWp)",
+    "savingPowerLabel": "Power Saving (kWh)",
+    "featuredQuestion": "Featured project?",
+    "detailsSection": "Project Details",
+    "detailContent": "Content",
+    "constructionDate": "Construction Date",
+    "detailImage": "Detail Image",
+    "noDetails": "No details yet.",
+    "codeRequired": "Please enter the Project Code",
+    "saveError": "An error occurred while saving data.",
+    "code": "Project Code",
+    "featuredImage": "Featured Image",
+    "title": "Title",
+    "name": "Project Name",
+    "description": "Description",
+    "address": "Address",
+    "solarPower": "Solar Power",
+    "savingPower": "Saving Power",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "featured": "Featured",
+    "status": "Status",
+    "searchPlaceholder": "Search by project name...",
+    "confirmDelete": "Are you sure you want to delete {count} selected projects?",
+    "noDataExport": "No data to export!"
+  },
   "asset": {
     "status": {
       "not_used": "Not Used",
@@ -77,6 +153,68 @@
     "group": "Service Group",
     "type": "Service Type",
     "status": "Status",
-    "search_placeholder": "Search by name/code..."
+    "search_placeholder": "Search by name/code...",
+    "selectGroupPlaceholder": "-- Select service group --",
+    "selectTypePlaceholder": "-- Select service type --",
+    "confirmDelete": "Are you sure you want to delete {count} selected services?",
+    "saveError": "An error occurred"
+  },
+  "item": {
+    "addTitle": "Add Catalog Item",
+    "editTitle": "Edit Catalog Item",
+    "selectStatusPlaceholder": "-- Select status --",
+    "itemCode": "Item Code",
+    "groupItemCode": "Group Code",
+    "groupItemName": "Group Name",
+    "itemSubCode": "Sub-item Code",
+    "itemSubName": "Sub-item Name",
+    "description": "Description",
+    "status": "Status",
+    "searchPlaceholder": "Search catalog...",
+    "confirmDelete": "Are you sure you want to delete {count} selected records?",
+    "saveError": "An error occurred while saving!"
+  },
+  "assetPage": {
+    "addTitle": "Add Asset",
+    "editTitle": "Edit Asset",
+    "currentImage": "Current image: {image}",
+    "currentUserLabel": "Current User",
+    "usageDateLabel": "Usage Date",
+    "saveError": "An error occurred",
+    "code": "Asset Code",
+    "image": "Equipment Image",
+    "name": "Asset Name",
+    "group": "Group",
+    "type": "Type",
+    "provider": "Provider",
+    "currentUser": "Current User",
+    "startDate": "Start Date",
+    "endDate": "Expiry Date",
+    "price": "Price",
+    "warrantyPeriod": "Warranty (Months)",
+    "dateOfPurchase": "Purchase Date",
+    "status": "Status",
+    "searchPlaceholder": "Search by name/group...",
+    "confirmDelete": "Are you sure you want to delete {count} selected assets?",
+    "noDataExport": "No data to export!"
+  },
+  "user": {
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "accessId": "Access ID",
+    "addTitle": "Add User",
+    "editTitle": "Edit User",
+    "password": "Password",
+    "roleLabel": "Role",
+    "saveError": "An error occurred while saving data."
+  },
+  "changePassword": {
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "mismatchError": "Password confirmation does not match.",
+    "success": "Password changed successfully!",
+    "error": "Failed to change password"
   }
 }

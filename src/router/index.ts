@@ -1,55 +1,47 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import Login from '../views/TsoLogin.vue'
-import Dashboard from '../views/TsoDashboard.vue'
-import Layout from '../views/layout/TsoLayout.vue'
-import ProjectManagement from '../views/master_data/projects/TsoProjectManagement.vue'
-import UserManagement from '../views/master_data/users/TsoUserManagement.vue'
-import AssetManagement from '../views/master_data/assets/TsoAssetManagement.vue'
-import ServiceManagement from '../views/master_data/services/TsoServiceManagement.vue'
-import ItemManagement from '../views/master_data/items/TsoItemManagement.vue'
 import { LocalStorageUtils } from '../utils/LocalStorageUtils'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'TsoLogin',
-    component: Login,
+    component: () => import('../views/TsoLogin.vue'),
     meta: { requiresGuest: true }
   },
   {
     path: '/',
-    component: Layout,
+    component: () => import('../views/layout/TsoLayout.vue'),
     meta: { requiresAuth: true },
     children: [
       {
         path: 'dashboard',
         name: 'TsoDashboard',
-        component: Dashboard
+        component: () => import('../views/TsoDashboard.vue')
       },
       {
         path: 'projects',
         name: 'TsoProjectManagement',
-        component: ProjectManagement
+        component: () => import('../views/master_data/projects/TsoProjectManagement.vue')
       },
       {
         path: 'users',
         name: 'TsoUserManagement',
-        component: UserManagement
+        component: () => import('../views/master_data/users/TsoUserManagement.vue')
       },
       {
         path: 'assets',
         name: 'TsoAssetManagement',
-        component: AssetManagement
+        component: () => import('../views/master_data/assets/TsoAssetManagement.vue')
       },
       {
         path: 'services',
         name: 'TsoServiceManagement',
-        component: ServiceManagement
+        component: () => import('../views/master_data/services/TsoServiceManagement.vue')
       },
       {
         path: 'items',
         name: 'TsoItemManagement',
-        component: ItemManagement
+        component: () => import('../views/master_data/items/TsoItemManagement.vue')
       }
     ]
   },

@@ -6,23 +6,23 @@
       <div class="action-buttons">
           <button class="btn btn-primary" @click="openForm(null)">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            {{ $t('button.add') || 'Thêm mới' }}
+            {{ $t('button.add') }}
           </button>
           <button class="btn btn-primary" :disabled="!isSingleSelected" @click="handleEdit">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            {{ $t('button.edit') || 'Sửa' }}
+            {{ $t('button.edit') }}
           </button>
           <button class="btn btn-info" :disabled="!isSingleSelected" @click="handleCopy">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            {{ $t('button.copy') || 'Copy' }}
+            {{ $t('button.copy') }}
           </button>
           <button class="btn btn-danger" :disabled="selectedIds.length === 0" @click="handleDelete">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            {{ $t('button.delete') || 'Xóa' }}
+            {{ $t('button.delete') }}
           </button>
           <button class="btn btn-success" style="background: #28a745; color: white;" @click="handleExportExcel">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            {{ $t('button.exportExcel') || 'Xuất Excel' }}
+            {{ $t('button.exportExcel') }}
           </button>
       </div>
 
@@ -32,7 +32,7 @@
           <input
             type="text"
             v-model="tempSearchName"
-            placeholder="Tìm theo tên/nhóm tài sản..."
+            :placeholder="$t('assetPage.searchPlaceholder')"
             class="search-input"
             @keyup.enter="handleSearch"
           />
@@ -40,7 +40,7 @@
         
         <button class="btn btn-primary" @click="handleSearch" style="margin-left: 8px; width: max-content;">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          {{ $t('button.search') || 'Tìm kiếm' }}
+          {{ $t('button.search') }}
         </button>
       </div>
 
@@ -53,20 +53,20 @@
                 <th class="th-check">
                   <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
                 </th>
-                <th style="width: 50px; text-align: center;">STT</th>
-                <th>Mã Tài Sản</th>
-                <th>Ảnh Thiết Bị</th>
-                <th>Tên Tài Sản</th>
-                <th>Nhóm</th>
-                <th>Loại</th>
-                <th>Người Cấp</th>
-                <th>Người Dùng</th>
-                <th>Ngày Bắt Đầu</th>
-                <th>Ngày Hết Hạn</th>
-                <th>Giá</th>
-                <th>Bảo Hành (Tháng)</th>
-                <th>Ngày Mua</th>
-                <th>Trạng Thái</th>
+                <th style="width: 50px; text-align: center;">{{ $t('common.stt') }}</th>
+                <th>{{ $t('assetPage.code') }}</th>
+                <th>{{ $t('assetPage.image') }}</th>
+                <th>{{ $t('assetPage.name') }}</th>
+                <th>{{ $t('assetPage.group') }}</th>
+                <th>{{ $t('assetPage.type') }}</th>
+                <th>{{ $t('assetPage.provider') }}</th>
+                <th>{{ $t('assetPage.currentUser') }}</th>
+                <th>{{ $t('assetPage.startDate') }}</th>
+                <th>{{ $t('assetPage.endDate') }}</th>
+                <th>{{ $t('assetPage.price') }}</th>
+                <th>{{ $t('assetPage.warrantyPeriod') }}</th>
+                <th>{{ $t('assetPage.dateOfPurchase') }}</th>
+                <th>{{ $t('assetPage.status') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -96,7 +96,7 @@
                 <td>{{ item.assetStatusName }}</td>
               </tr>
               <tr v-if="assets.length === 0">
-                <td colspan="13" class="empty-row">Không có dữ liệu</td>
+                <td colspan="13" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -106,7 +106,7 @@
       <!-- Card Footer: Pagination -->
       <div class="card-footer" v-if="assets.length > 0">
         <span class="showing-text">
-          Hiển thị trang {{ page + 1 }}
+          {{ $t('common.showingPage', { page: page + 1 }) }}
         </span>
         <div class="pagination">
           <button class="page-link" :disabled="page === 0" @click="changePage(page - 1)">‹</button>
@@ -134,7 +134,7 @@ import { TsoAssetManagementApi } from '../../../api/TsoAssetManagementApi'
 import TsoAssetDialog from './TsoAssetDialog.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
 
-useI18n()
+const { t } = useI18n()
 
 const mainContainerRef = ref<HTMLElement | null>(null)
 useFocusTrap(mainContainerRef, { autoFocus: false })
@@ -161,11 +161,11 @@ const toggleAll = (e: Event) => {
 
 const fetchAssets = async () => {
   try {
-    const res = await TsoAssetManagementApi.getAssetsPage(page.value, size.value, searchName.value)
-    if (res.data.code === 200) {
-      assets.value = res.data.data.page.content
-      assetStatuses.value = res.data.data.statuses
-      isLastPage.value = res.data.data.page.last
+    const res: any = await TsoAssetManagementApi.getAssetsPage(page.value, size.value, searchName.value)
+    if (res.statusCode === 200) {
+      assets.value = res.data.page.content
+      assetStatuses.value = res.data.statuses
+      isLastPage.value = res.data.page.last
     }
   } catch (e) {
     console.error(e)
@@ -213,14 +213,15 @@ const handleCopy = () => {
 
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
-  if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.value.length} tài sản đã chọn?`)) {
-    try {
-      for (const id of selectedIds.value) {
-        await TsoAssetManagementApi.deleteAsset(id)
-      }
-      selectedIds.value = []
-      fetchAssets()
-    } catch (e) { alert('Có lỗi khi xóa') }
+  if (confirm(t('assetPage.confirmDelete', { count: selectedIds.value.length }))) {
+    const results = await Promise.allSettled(selectedIds.value.map(id => TsoAssetManagementApi.deleteAsset(id)))
+    const failedCount = results.filter(r => r.status === 'rejected').length
+    if (failedCount > 0) {
+      results.forEach(r => { if (r.status === 'rejected') console.error('Failed to delete asset', r.reason) })
+      alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
+    }
+    selectedIds.value = []
+    fetchAssets()
   }
 }
 
@@ -231,7 +232,7 @@ const changePage = (newPage: number) => {
 
 const handleExportExcel = () => {
   if (assets.value.length === 0) {
-    alert("Không có dữ liệu để xuất!");
+    alert(t('assetPage.noDataExport'));
     return;
   }
   const headers = [

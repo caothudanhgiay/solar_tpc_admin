@@ -4,23 +4,23 @@
       <div class="action-buttons">
           <button class="btn btn-primary" @click="openForm(null)">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            {{ $t('button.add') || 'Thêm mới' }}
+            {{ $t('button.add') }}
           </button>
           <button class="btn btn-primary" :disabled="!isSingleSelected" @click="handleEdit">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            {{ $t('button.edit') || 'Sửa' }}
+            {{ $t('button.edit') }}
           </button>
           <button class="btn btn-info" :disabled="!isSingleSelected" @click="handleCopy">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            {{ $t('button.copy') || 'Copy' }}
+            {{ $t('button.copy') }}
           </button>
           <button class="btn btn-danger" :disabled="selectedIds.length === 0" @click="handleDelete">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            {{ $t('button.delete') || 'Xóa' }}
+            {{ $t('button.delete') }}
           </button>
           <button class="btn btn-success" style="background: #28a745; color: white;" @click="handleExportExcel">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            {{ $t('button.exportExcel') || 'Xuất Excel' }}
+            {{ $t('button.exportExcel') }}
           </button>
       </div>
 
@@ -38,7 +38,7 @@
         
         <button class="btn btn-primary" @click="handleSearch" style="margin-left: 8px; width: max-content;">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          {{ $t('button.search') || 'Tìm kiếm' }}
+          {{ $t('button.search') }}
         </button>
       </div>
 
@@ -79,7 +79,7 @@
                 <td>{{ item.serviceStatusName }}</td>
               </tr>
               <tr v-if="services.length === 0">
-                <td colspan="8" class="empty-row">{{ $t('message.no_data') || 'Không có dữ liệu' }}</td>
+                <td colspan="8" class="empty-row">{{ $t('message.no_data') }}</td>
               </tr>
             </tbody>
           </table>
@@ -142,11 +142,11 @@ const toggleAll = (e: Event) => {
 
 const fetchServices = async () => {
   try {
-    const res = await TsoServiceManagementApi.getServicesPage(page.value, size.value, searchName.value)
-    if (res.data.statusCode === 200) {
-      services.value = res.data.data.page.content
-      serviceStatuses.value = res.data.data.statuses
-      isLastPage.value = res.data.data.page.last
+    const res: any = await TsoServiceManagementApi.getServicesPage(page.value, size.value, searchName.value)
+    if (res.statusCode === 200) {
+      services.value = res.data.page.content
+      serviceStatuses.value = res.data.statuses
+      isLastPage.value = res.data.page.last
     }
   } catch (e) {
     console.error(e)
@@ -194,14 +194,15 @@ const handleCopy = () => {
 
 const handleDelete = async () => {
   if (selectedIds.value.length === 0) return
-  if (confirm(t('message.confirm_delete', { count: selectedIds.value.length }) || `Bạn có chắc chắn muốn xóa ${selectedIds.value.length} dịch vụ đã chọn?`)) {
-    try {
-      for (const id of selectedIds.value) {
-        await TsoServiceManagementApi.deleteService(id)
-      }
-      selectedIds.value = []
-      fetchServices()
-    } catch (e) { alert(t('message.delete_error') || 'Có lỗi khi xóa') }
+  if (confirm(t('service.confirmDelete', { count: selectedIds.value.length }))) {
+    const results = await Promise.allSettled(selectedIds.value.map(id => TsoServiceManagementApi.deleteService(id)))
+    const failedCount = results.filter(r => r.status === 'rejected').length
+    if (failedCount > 0) {
+      results.forEach(r => { if (r.status === 'rejected') console.error('Failed to delete service', r.reason) })
+      alert(t('common.deleteFailedCount', { failed: failedCount, total: selectedIds.value.length }))
+    }
+    selectedIds.value = []
+    fetchServices()
   }
 }
 
@@ -212,7 +213,7 @@ const changePage = (newPage: number) => {
 
 const handleExportExcel = () => {
   if (services.value.length === 0) {
-    alert(t('message.no_data_export') || "Không có dữ liệu để xuất!");
+    alert(t('message.no_data_export'));
     return;
   }
   const headers = [

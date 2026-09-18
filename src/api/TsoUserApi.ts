@@ -6,8 +6,9 @@ const BASE_PATH = '/api/users';
  * API service cho màn hình quản lý Người dùng.
  */
 export const TsoUserApi = {
-  /** Lấy tất cả người dùng */
-  getAllUsers: () => apiGet(BASE_PATH),
+  /** Lấy người dùng theo trang, có thể kèm bộ lọc theo username/email */
+  getUsersPage: (page: number, size: number, username?: string, email?: string) =>
+    apiGet(`${BASE_PATH}/page`, { page, size, username, email }),
 
   /** Lấy người dùng theo ID */
   getUserById: (id: number) => apiGet(`${BASE_PATH}/${id}`),
