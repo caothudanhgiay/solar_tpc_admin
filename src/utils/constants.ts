@@ -24,3 +24,8 @@ export const APP_CONSTANTS = {
   DEFAULT_CREATOR: 'admin',
   DEFAULT_PAGE_SIZE: 10,
 };
+
+// Timeout (ms) cho request upload multipart (lưu dự án/dịch vụ/tài sản kèm ảnh).
+// Mặc định apiClient chỉ 10s — không đủ khi gửi nhiều ảnh vài MB + backend nén ảnh.
+// 100s = giới hạn chờ tối đa của Cloudflare (quá mức này Cloudflare trả 524).
+export const UPLOAD_TIMEOUT_MS = 100000;

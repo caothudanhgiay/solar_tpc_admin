@@ -1,8 +1,8 @@
 import { apiGet, apiPost, apiPut, apiDelete } from './apiClient';
-import { API_PROJECTS } from '../utils/constants';
+import { API_PROJECTS, UPLOAD_TIMEOUT_MS } from '../utils/constants';
 
 // Content-Type: undefined -> để axios tự set 'multipart/form-data' kèm boundary cho FormData.
-const FORM_DATA_CONFIG = { headers: { 'Content-Type': undefined } };
+const FORM_DATA_CONFIG = { headers: { 'Content-Type': undefined }, timeout: UPLOAD_TIMEOUT_MS };
 
 export const TsoProjectApi = {
   getProjectsPage(page: number, size: number, keyword?: string) {

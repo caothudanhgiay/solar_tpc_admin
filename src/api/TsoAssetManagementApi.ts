@@ -1,8 +1,8 @@
 import { apiGet, apiPost, apiPut, apiDelete } from './apiClient';
-import { API_ASSETS } from '../utils/constants';
+import { API_ASSETS, UPLOAD_TIMEOUT_MS } from '../utils/constants';
 
 // Content-Type: undefined -> để axios tự set 'multipart/form-data' kèm boundary cho FormData.
-const FORM_DATA_CONFIG = { headers: { 'Content-Type': undefined } };
+const FORM_DATA_CONFIG = { headers: { 'Content-Type': undefined }, timeout: UPLOAD_TIMEOUT_MS };
 
 export const TsoAssetManagementApi = {
   getAssetsPage(page: number, size: number, keyword?: string) {
