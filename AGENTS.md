@@ -364,6 +364,60 @@ npm run preview  # Preview production build
 - Cách verify hiện tại: `npm run dev`, kiểm tra bằng tay qua trình duyệt (đặc biệt các màn Master Data — CRUD, upload ảnh, xuất Excel) + `npm run build` để bắt lỗi type (`vue-tsc`).
 - Nếu người dùng yêu cầu thêm test framework, đề xuất Vitest (đồng bộ hệ sinh thái Vite) và hỏi rõ phạm vi (unit cho `utils/`+`composables/`, hay cả component test).
 
+## 9. Quy tắc Tránh Lỗi Hiệu Năng & Lỗi Thường Gặp (Performance & Common Pitfalls)
+
+### 9.1. Tránh gọi API tuần tự / trong vòng lặp (tương đương N+1 ở Frontend)
+- **TUYỆT ĐỐI KHÔNG** gọi API riêng cho từng item trong 1 danh sách (vd lấy detail cho từng dòng trong bảng Master Data) — mỗi item 1 request làm chậm trang tỉ lệ thuận với số dòng.
+- **TUYỆT ĐỐI KHÔNG** `await` tuần tự nhiều API độc lập không phụ thuộc kết quả của nhau — dùng `Promise.all`.
+```typescript
+// ❌ SAI — N+1: gọi API riêng cho từng item, await tuần tự trong for
+for (const item of selectedIds.value) {
+  await apiDelete(`${API_PROJECTS}/${item}`); // N request tuần tự, chậm dần theo số item
+}
+
+// ✅ ĐÚNG — song song hoá (nếu backend hỗ trợ), hoặc tốt hơn là 1 API nhận list id (bulk delete)
+await Promise.all(selectedIds.value.map((id) => apiDelete(`${API_PROJECTS}/${id}`)));
+// Ưu tiên hơn nữa: bổ sung API bulk (POST /api/projects/bulk-delete { ids: [...] }) để chỉ 1 request
+```
+- Ưu tiên đề xuất/dùng API bulk từ backend (1 request xử lý nhiều id) thay vì N request song song từ frontend khi thao tác trên nhiều dòng đã chọn (xóa nhiều, cập nhật trạng thái nhiều...).
+
+### 9.2. Cleanup `watch`/interval/listener trong `onUnmounted`
+- Mọi `setInterval`/`setTimeout` dài hạn, `window.addEventListener`, hoặc `watch` không tự dừng khi component unmount PHẢI được dọn trong `onUnmounted` — không dọn gây memory leak và lỗi cập nhật state trên component đã hủy.
+```typescript
+// ❌ SAI — không cleanup, leak listener/interval khi component unmount
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  setInterval(fetchStatus, 5000)
+})
+
+// ✅ ĐÚNG
+let timer: number
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  timer = window.setInterval(fetchStatus, 5000)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  clearInterval(timer)
+})
+```
+- `watch(..., { deep: true })` trên object/array lớn tốn chi phí theo dõi từng field lồng nhau — chỉ dùng `deep: true` khi thực sự cần phát hiện thay đổi sâu; nếu chỉ cần theo dõi 1 field cụ thể, `watch(() => obj.field, ...)` thay vì deep-watch cả object.
+
+### 9.3. Danh sách lớn — Pagination thay vì fetch/tự phân trang ở client
+- Bảng Master Data (theo Quy chuẩn Layout Master Data ở cuối file) **PHẢI** dùng Pagination gọi từ backend (`Pageable`) — **TUYỆT ĐỐI KHÔNG** fetch hết toàn bộ bảng về rồi tự `slice()`/`filter()` phân trang ở client khi dữ liệu có khả năng lớn.
+- Riêng chức năng **Xuất Excel** (mục 3.8) khi cần xuất *toàn bộ* dữ liệu (không chỉ trang đang xem), gọi API riêng lấy full data không phân trang — hiển thị loading rõ ràng, không block UI, và cân nhắc giới hạn số dòng tối đa hợp lý phía backend nếu bảng có thể quá lớn.
+
+### 9.4. `reactive`/`ref` pitfalls
+- **KHÔNG destructure trực tiếp** 1 object `reactive()` (vd `const { name } = reactive({...})`) — mất reactivity vì destructure lấy ra giá trị nguyên thủy tại thời điểm đó, không còn liên kết với object gốc. Dùng `toRefs()` nếu cần destructure.
+- **KHÔNG mutate `props` trực tiếp** trong component con (vd `props.modelValue = x`) — Vue cảnh báo và vi phạm luồng dữ liệu 1 chiều; dùng `emit` để báo component cha cập nhật, hoặc `defineModel()`/`v-model` cho 2-way binding chuẩn.
+- Với danh sách lớn hiển thị trong bảng (hàng trăm dòng) chỉ cần render, không cần theo dõi thay đổi sâu từng field lồng nhau, cân nhắc `shallowRef`/`shallowReactive` thay vì `ref`/`reactive` mặc định để giảm overhead Proxy tracking.
+
+### 9.5. Các lỗi thường gặp khác
+- **`v-for` phải có `:key` duy nhất và ổn định** (id thật từ data) — KHÔNG dùng `index` làm key khi list có thể sort/filter/thêm/xóa (gây bug UI: state/input của dòng bị lẫn sang dòng khác sau khi re-order).
+- **Search input gọi API mỗi keystroke**: PHẢI debounce (composable riêng trong `src/composables/`, vd `useDebounce`) trước khi gọi API tìm kiếm, tránh spam request khi user gõ nhanh — đặc biệt các ô tìm kiếm ở màn Master Data.
+- **`v-if` vs `v-show`**: dùng `v-show` khi toggle qua lại thường xuyên (giữ DOM, chỉ ẩn/hiện — tránh chi phí mount/unmount lặp lại, vd tab chuyển đổi liên tục); dùng `v-if` khi điều kiện hiếm thay đổi hoặc cần giải phóng hẳn resource của component con khi ẩn (vd đóng dialog nặng).
+- **Lazy load route lớn**: mọi `component: () => import(...)` trong router (đã là rule chuẩn ở mục 3.3) — khi thêm view mới cho module lớn (chart, editor...), giữ đúng pattern lazy import, không đổi sang import tĩnh ở đầu file làm phình bundle ban đầu.
+
 ## 🚫 Quy tắc Tránh Hardcode Text / i18n (BẮT BUỘC — xem thêm `../AGENTS.md`)
 
 **KHÔNG bao giờ** viết text tiếng Việt/Anh trực tiếp trong `<template>`. Luôn dùng `$t('key')` (template) hoặc `t('key')` (script, qua `useI18n()`).

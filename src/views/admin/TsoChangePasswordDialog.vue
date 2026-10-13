@@ -104,7 +104,14 @@ const submitForm = async () => {
     }
   } catch (error) {
     console.error('Save failed', error)
-    errorMsg.value = error instanceof ApiException ? error.message : t('user.saveError')
+    if (error instanceof ApiException) {
+      // Lỗi validate từng field (vd mật khẩu yếu) nằm trong data.data → hiện lý do cụ thể thay vì message chung
+      const fieldErrors = error.data?.data
+      const detail = fieldErrors && typeof fieldErrors === 'object' ? Object.values(fieldErrors).join(' ') : ''
+      errorMsg.value = detail || error.message
+    } else {
+      errorMsg.value = t('user.saveError')
+    }
   } finally {
     loading.value = false
   }
