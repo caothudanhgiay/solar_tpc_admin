@@ -25,6 +25,7 @@
           <div class="form-group" v-if="!isEdit">
             <label class="form-label">{{ $t('user.password') }} <span class="required">*</span></label>
             <input type="password" v-model="form.password" required class="form-control" />
+            <small class="password-hint">{{ $t('user.passwordHint') }}</small>
           </div>
           <div class="form-group">
             <label class="form-label">{{ $t('user.roleLabel') }} <span class="required">*</span></label>
@@ -55,6 +56,7 @@ import { useI18n } from 'vue-i18n'
 import { TsoUserApi } from '../../../api/TsoUserApi'
 import TsoSelectOption from '../../components/common/TsoSelectOption.vue'
 import { useFocusTrap } from '../../../composables/useFocusTrap'
+import { StringUtils } from '../../../utils/StringUtils'
 
 const { t } = useI18n()
 const dialogRef = ref<HTMLElement | null>(null)
@@ -95,8 +97,14 @@ const closeForm = () => {
 }
 
 const submitForm = async () => {
-  loading.value = true
   errorMsg.value = ''
+  // Chỉ validate khi tạo mới — màn sửa không có ô mật khẩu
+  if (!isEdit.value && !StringUtils.isStrongPassword(form.value.password)) {
+    errorMsg.value = t('user.passwordWeak')
+    return
+  }
+
+  loading.value = true
   try {
     if (isEdit.value) {
       await TsoUserApi.updateUser(form.value.userId!, form.value)
@@ -133,6 +141,13 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
+.password-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 /* Backdrop */
 .modal-backdrop {
   position: fixed;

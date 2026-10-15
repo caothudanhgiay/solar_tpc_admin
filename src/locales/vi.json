@@ -214,7 +214,9 @@
     "editTitle": "Cập nhật Người dùng",
     "password": "Mật khẩu",
     "roleLabel": "Quyền hạn (Role)",
-    "saveError": "Có lỗi xảy ra khi lưu dữ liệu."
+    "saveError": "Có lỗi xảy ra khi lưu dữ liệu.",
+    "passwordHint": "Tối thiểu 10 ký tự, gồm chữ in hoa, số và ký tự đặc biệt. Ví dụ: aHao{'@'}123456",
+    "passwordWeak": "Mật khẩu phải có ít nhất 10 ký tự, bao gồm chữ in hoa, số và ký tự đặc biệt. Ví dụ: aHao{'@'}123456 hoặc DienNghia$%333"
   },
   "changePassword": {
     "oldPassword": "Nhập lại mật khẩu (Mật khẩu cũ)",

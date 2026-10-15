@@ -13,6 +13,16 @@ export class StringUtils {
   }
 
   /**
+   * Kiểm tra mật khẩu mạnh: ít nhất 10 ký tự, có chữ in hoa, số và ký tự đặc biệt.
+   * PHẢI giữ đồng bộ với PASSWORD_REGEX trong TSOValidation.java (backend).
+   * Ví dụ hợp lệ: aHao@123456, DienNghia$%333
+   */
+  static isStrongPassword(password: string | null | undefined): boolean {
+    if (this.isEmpty(password)) return false;
+    return /^(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{10,}$/.test(password!);
+  }
+
+  /**
    * Cắt chuỗi nếu vượt quá độ dài tối đa và thêm dấu '...'
    * @param str Chuỗi cần cắt
    * @param maxLength Độ dài tối đa

@@ -214,7 +214,9 @@
     "editTitle": "Edit User",
     "password": "Password",
     "roleLabel": "Role",
-    "saveError": "An error occurred while saving data."
+    "saveError": "An error occurred while saving data.",
+    "passwordHint": "At least 10 characters with an uppercase letter, a number and a special character. Ex: aHao{'@'}123456",
+    "passwordWeak": "Password must be at least 10 characters long and include an uppercase letter, a number and a special character. Ex: aHao{'@'}123456 or DienNghia$%333"
   },
   "changePassword": {
     "oldPassword": "Old Password",
